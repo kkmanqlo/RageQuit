@@ -13,11 +13,14 @@ public class CharacterMovement : MonoBehaviour
     private float Horizontal;
     private bool Grounded;
 
+     Vector2 startPosition;
+
     // Se llama al inicio del juego
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
+        startPosition = transform.position;
 
     }
 
@@ -29,7 +32,10 @@ public class CharacterMovement : MonoBehaviour
         if (Horizontal < 0.0f) transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
         else if (Horizontal > 0.0f) transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        Animator.SetBool("running", Horizontal != 0.0f);
+        Animator.SetBool("grounded", Grounded);
+        Animator.SetBool("running", Grounded && Horizontal != 0.0f);
+        Animator.SetFloat("yvelocity", Rigidbody2D.linearVelocity.y);
+        
 
         Debug.DrawRay(transform.position, Vector3.down * 0.16f, Color.red);
         if (Physics2D.Raycast(transform.position, Vector3.down, 0.16f))
@@ -49,6 +55,7 @@ public class CharacterMovement : MonoBehaviour
     private void Jump()
     {
         Rigidbody2D.AddForce(Vector2.up * JumpForce);
+        Animator.SetTrigger("jump");
     }
 
     //El metodo FixedUpdate se llama en cada frame de fisica
@@ -56,5 +63,9 @@ public class CharacterMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Rigidbody2D.linearVelocity = new Vector2(Horizontal, Rigidbody2D.linearVelocity.y);
+    }
+
+     public void Die(){
+        transform.position = startPosition;
     }
 }
