@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Marco_PopUp_0: -4379720368392157141
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

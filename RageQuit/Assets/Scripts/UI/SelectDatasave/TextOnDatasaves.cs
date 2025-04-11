@@ -33,7 +33,7 @@ public class TextOnDatasaves : MonoBehaviour
 
     void CargarDatos()
     {
-        int idUsuario = 1; // Este es el ID del usuario, ajústalo según tu lógica
+        int idUsuario = 1;
 
         // Datos predeterminados en caso de que no haya registros en la base de datos
         string ultimoNivel = "No hay niveles completados";
