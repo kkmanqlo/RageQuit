@@ -75,3 +75,4 @@ crashlytics-build.properties
 
 # Ignorar archivos .asset en la carpeta Fuentes y sus subcarpetas
 Assets/Fuentes/*.asset
+Assets/Fuentes/*.asset.meta
