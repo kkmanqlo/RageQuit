@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using DG.Tweening; 
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class CharacterMovement : MonoBehaviour
     private Animator Animator;
     private float Horizontal;
     private bool Grounded;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor; // Color original del sprite
 
      Vector2 startPosition;
 
@@ -21,6 +24,8 @@ public class CharacterMovement : MonoBehaviour
         Rigidbody2D = GetComponent<Rigidbody2D>();
         Animator = GetComponent<Animator>();
         startPosition = transform.position;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color; // Guardar el color original
 
     }
 
@@ -65,7 +70,17 @@ public class CharacterMovement : MonoBehaviour
         Rigidbody2D.linearVelocity = new Vector2(Horizontal, Rigidbody2D.linearVelocity.y);
     }
 
-     public void Die(){
-        transform.position = startPosition;
+    public void Die()
+    {
+        // Efecto rojo
+        spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
+        {
+            DOVirtual.DelayedCall(0.02f, () =>
+            {
+                spriteRenderer.DOColor(originalColor, 0.05f);
+                // Reiniciar posición después del parpadeo
+                transform.position = startPosition;
+            });
+        });
     }
 }
