@@ -44,7 +44,9 @@ public class CharacterMovement : MonoBehaviour
 
         Animator.SetBool("grounded", Grounded);
         Animator.SetBool("running", Grounded && Horizontal != 0.0f);
+        Animator.SetBool("falling", !Grounded && Rigidbody2D.linearVelocity.y < 0.0f);
         Animator.SetFloat("yvelocity", Rigidbody2D.linearVelocity.y);
+        Animator.SetFloat("xvelocity", Rigidbody2D.linearVelocity.x);
 
 
         Debug.DrawRay(transform.position, Vector3.down * 0.16f, Color.red);
