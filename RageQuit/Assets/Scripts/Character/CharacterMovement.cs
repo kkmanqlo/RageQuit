@@ -87,9 +87,10 @@ public class CharacterMovement : MonoBehaviour
 
     void quitarAccion()
     {
-        // Se llama al final de la animación de ataque
-        inputBuffer.Dequeue(); // Eliminar la acción de ataque del buffer
+        if (inputBuffer.Count > 0)
+            inputBuffer.Dequeue();
     }
+
 
     //El metodo FixedUpdate se llama en cada frame de fisica
 
