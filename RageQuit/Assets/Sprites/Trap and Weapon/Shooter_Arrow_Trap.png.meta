@@ -55,7 +55,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -121,10 +121,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 4
-        width: 15
-        height: 12
+        x: 1
+        y: 5
+        width: 13
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,10 +143,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_1
       rect:
         serializedVersion: 2
-        x: 16
-        y: 5
-        width: 15
-        height: 11
+        x: 17
+        y: 6
+        width: 13
+        height: 10
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,10 +165,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_2
       rect:
         serializedVersion: 2
-        x: 32
-        y: 1
-        width: 15
-        height: 15
+        x: 33
+        y: 2
+        width: 13
+        height: 14
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,10 +187,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_3
       rect:
         serializedVersion: 2
-        x: 48
-        y: 8
-        width: 15
-        height: 8
+        x: 49
+        y: 9
+        width: 13
+        height: 7
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -209,10 +209,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_4
       rect:
         serializedVersion: 2
-        x: 52
-        y: 1
-        width: 7
-        height: 9
+        x: 53
+        y: 2
+        width: 5
+        height: 7
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -231,10 +231,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_5
       rect:
         serializedVersion: 2
-        x: 64
-        y: 8
-        width: 15
-        height: 8
+        x: 65
+        y: 9
+        width: 13
+        height: 7
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -253,10 +253,10 @@ TextureImporter:
       name: Shooter_Arrow_Trap_6
       rect:
         serializedVersion: 2
-        x: 80
-        y: 7
-        width: 15
-        height: 9
+        x: 81
+        y: 8
+        width: 13
+        height: 8
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -275,7 +275,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 46d07baea69749b48b21ab078aa44ca6
     internalID: 0
     vertices: []
     indices: 
