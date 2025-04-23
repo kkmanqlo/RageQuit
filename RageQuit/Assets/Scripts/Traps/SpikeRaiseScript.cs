@@ -6,7 +6,7 @@ public class SpikeRaiseScript : MonoBehaviour
     public BoxCollider2D detectionTrigger; // El trigger que detecta al jugador
     public BoxCollider2D spikeCollider;    // El que hace daño (activado con animación)
     public Animator animator;
-    public float activationDelay = 1f;
+    public float activationDelay;
 
     private bool activated = false;
 
