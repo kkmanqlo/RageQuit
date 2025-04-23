@@ -58,7 +58,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -124,10 +124,10 @@ TextureImporter:
       name: FallingPlatfrom_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 4
-        width: 32
-        height: 12
+        x: 1
+        y: 5
+        width: 30
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,10 +146,10 @@ TextureImporter:
       name: FallingPlatfrom_1
       rect:
         serializedVersion: 2
-        x: 35
-        y: 4
-        width: 26
-        height: 12
+        x: 36
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,10 +168,10 @@ TextureImporter:
       name: FallingPlatfrom_2
       rect:
         serializedVersion: 2
-        x: 67
-        y: 4
-        width: 26
-        height: 12
+        x: 68
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -190,10 +190,10 @@ TextureImporter:
       name: FallingPlatfrom_3
       rect:
         serializedVersion: 2
-        x: 99
-        y: 4
-        width: 26
-        height: 12
+        x: 100
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -212,10 +212,10 @@ TextureImporter:
       name: FallingPlatfrom_4
       rect:
         serializedVersion: 2
-        x: 131
-        y: 4
-        width: 26
-        height: 12
+        x: 132
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -234,10 +234,10 @@ TextureImporter:
       name: FallingPlatfrom_5
       rect:
         serializedVersion: 2
-        x: 163
-        y: 4
-        width: 26
-        height: 12
+        x: 164
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -256,10 +256,10 @@ TextureImporter:
       name: FallingPlatfrom_6
       rect:
         serializedVersion: 2
-        x: 195
-        y: 4
-        width: 26
-        height: 12
+        x: 196
+        y: 5
+        width: 24
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -278,10 +278,10 @@ TextureImporter:
       name: FallingPlatfrom_7
       rect:
         serializedVersion: 2
-        x: 224
-        y: 4
-        width: 32
-        height: 12
+        x: 225
+        y: 5
+        width: 30
+        height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -300,7 +300,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 2f6018e89ea0a594baa996d939bd229c
     internalID: 0
     vertices: []
     indices: 
