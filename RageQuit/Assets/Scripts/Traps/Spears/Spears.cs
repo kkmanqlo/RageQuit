@@ -7,6 +7,10 @@ public class Spears : MonoBehaviour
 
     public Collider2D damageColliderRetraido;
 
+    public Collider2D damageColliderMid;
+
+    //DAMAGE COLLIDER EXTENDIDO
+
     public void EnableDamageExtendido()
     {
         damageColliderExtendido.enabled = true;
@@ -17,6 +21,8 @@ public class Spears : MonoBehaviour
         damageColliderExtendido.enabled = false;
     }
 
+    //DAMAGE COLLIDER RETRAIDO
+
     public void EnableDamageRetraido()
     {
         damageColliderRetraido.enabled = true;
@@ -26,6 +32,20 @@ public class Spears : MonoBehaviour
     {
         damageColliderRetraido.enabled = false;
     }
+
+    //DAMAGE COLLIDER MID
+
+    public void EnableDamageMid()
+    {
+        damageColliderMid.enabled = true;
+    }
+
+    public void DisableDamageMid()
+    {
+        damageColliderMid.enabled = false;
+    }
+
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,6 +59,10 @@ public class Spears : MonoBehaviour
             character.Die();
         }
         else if (damageColliderRetraido.enabled && collision.IsTouching(damageColliderRetraido))
+        {
+            character.Die();
+        }
+        else if (damageColliderMid.enabled && collision.IsTouching(damageColliderMid))
         {
             character.Die();
         }
