@@ -2,17 +2,19 @@ using UnityEngine;
 
 public class SpearsDesfasadas : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public string nombreAnimacion = "Spear";
-    [Range(0f, 1f)] public float inicioEnCiclo = 0f; // 0 = inicio, 0.5 = mitad, 0.9 = casi al final
+    public string animationState = "Spear";
+    [Range(0f, 1f)] public float cycleOffset;
 
-    private Animator anim;
+    private Animator animator;
 
     void Start()
     {
-        anim = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
 
-        // Forzamos a reproducir la animación en un punto determinado del ciclo
-        anim.Play(nombreAnimacion, 0, inicioEnCiclo);
+        // MUY IMPORTANTE: cambiar UpdateMode a 'Normal' en el Animator Inspector
+        animator.updateMode = AnimatorUpdateMode.Normal;
+
+        // Forzar a reproducir la animación desde un punto desfasado
+        animator.Play(animationState, 0, cycleOffset);
     }
 }

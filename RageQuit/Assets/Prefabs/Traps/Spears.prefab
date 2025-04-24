@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6364451627894136159}
   - component: {fileID: 2325532882879565076}
   - component: {fileID: 3858815181612303293}
+  - component: {fileID: 5530875157556513733}
   m_Layer: 0
   m_Name: Spears
   m_TagString: Untagged
@@ -102,7 +103,7 @@ Animator:
   m_GameObject: {fileID: 4174072010161678229}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4e65d1ab1a100fb4ba1a38b59bd456fb, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9ca0b3063c1d0fb449aeed8a6c7aa9a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -267,3 +268,17 @@ MonoBehaviour:
   damageColliderExtendido: {fileID: 2325532882879565076}
   damageColliderRetraido: {fileID: 6364451627894136159}
   damageColliderMid: {fileID: 5173576970305606773}
+--- !u!114 &5530875157556513733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4174072010161678229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1340d452729654e4d95d9e08ceb03e33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationState: Spear
+  cycleOffset: 0
