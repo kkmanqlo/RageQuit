@@ -4,6 +4,8 @@ using DG.Tweening;
 using UnityEngine.InputSystem.LowLevel;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -49,8 +51,8 @@ public class CharacterMovement : MonoBehaviour
         Animator.SetFloat("xvelocity", Rigidbody2D.linearVelocity.x);
 
 
-        Debug.DrawRay(transform.position, Vector3.down * 0.16f, Color.red);
-        if (Physics2D.Raycast(transform.position, Vector3.down, 0.16f))
+        Debug.DrawRay(transform.position, Vector3.down * 0.18f, Color.red);
+        if (Physics2D.Raycast(transform.position, Vector3.down, 0.18f))
         {
             Grounded = true;
         }
@@ -100,25 +102,23 @@ public class CharacterMovement : MonoBehaviour
     }
 
     public void Die()
+{
+    spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
     {
-        // Efecto rojo rápido
-        spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
+        Time.timeScale = 0f;
+
+        DOVirtual.DelayedCall(0.2f, () =>
         {
-            // Detenemos el tiempo del juego
-            Time.timeScale = 0f;
+            Time.timeScale = 1f;
 
-            // Pero usamos DOVirtual.DelayedCall con tiempo real
-            DOVirtual.DelayedCall(0.2f, () =>
-            {
-                // Restaurar color original
-                spriteRenderer.color = originalColor;
+            // Cancelar todos los tweens activos para evitar errores de objetos destruidos
+            DOTween.KillAll();
 
-                // Mover al punto de respawn
-                transform.position = startPosition;
+            // Recargar escena
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }).SetUpdate(true);
+    });
+}
 
-                // Reanudar el tiempo del juego
-                Time.timeScale = 1f;
-            }).SetUpdate(true); // SetUpdate(true) hace que funcione incluso con timeScale = 0
-        });
-    }
+
 }
