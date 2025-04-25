@@ -22,6 +22,8 @@ public class CharacterMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor; // Color original del sprite
 
+    public RaycastHit2D hit;
+
     Vector2 startPosition;
 
     // Se llama al inicio del juego
@@ -50,9 +52,9 @@ public class CharacterMovement : MonoBehaviour
         Animator.SetFloat("yvelocity", Rigidbody2D.linearVelocity.y);
         Animator.SetFloat("xvelocity", Rigidbody2D.linearVelocity.x);
 
-
+        hit = Physics2D.Raycast(transform.position, Vector3.down, 0.18f);
         Debug.DrawRay(transform.position, Vector3.down * 0.18f, Color.red);
-        if (Physics2D.Raycast(transform.position, Vector3.down, 0.18f))
+        if (hit)
         {
             Grounded = true;
         }
