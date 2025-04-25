@@ -5,14 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/DebugScene_JC.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/MenuPrincipal.unity
+    path: Assets/Scenes/MenuScenes/MenuPrincipal.unity
     guid: 1f2b5dfc075ae1a47986ca9bd85d33a6
   - enabled: 1
-    path: Assets/Scenes/DataSaveSelectionScene.unity
+    path: Assets/Scenes/MenuScenes/DataSaveSelectionScene.unity
     guid: 3575412c4caaa3b479b7f00ddd4fe6f9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}
