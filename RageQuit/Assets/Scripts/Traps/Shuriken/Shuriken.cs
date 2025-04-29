@@ -1,42 +1,37 @@
 using UnityEngine;
 using DG.Tweening;
-using System.Collections.Generic;
 
-public class Shuriken : MonoBehaviour
+public class ShurikenProjectile : MonoBehaviour
 {
- [System.Serializable]
-    public class ShurikenData
+    [Header("Movimiento del shuriken")]
+    public Vector3 direction = new Vector3(); // Dirección por defecto: diagonal abajo-derecha
+    public float distance;
+    public float duration;
+
+    void OnEnable()
     {
-        public GameObject shurikenPrefab;
-        public Vector3 startPosition;
-        public Vector3 direction;
-        public float distance = 5f;
-        public float duration = 1f;
-        public bool destroyOnEnd = true;
-    }
+        // Calcula la posición final basándose en la dirección normalizada
+        Vector3 destination = transform.position + direction.normalized * distance;
 
-    public List<ShurikenData> shurikensToThrow;
-
-    void Start()
-    {
-        foreach (ShurikenData data in shurikensToThrow)
-        {
-            LaunchShuriken(data);
-        }
-    }
-
-    void LaunchShuriken(ShurikenData data)
-    {
-        GameObject shuriken = Instantiate(data.shurikenPrefab, data.startPosition, Quaternion.identity);
-
-        Vector3 endPosition = data.startPosition + data.direction.normalized * data.distance;
-
-        shuriken.transform.DOMove(endPosition, data.duration)
+        // Movimiento usando DOTween
+        transform.DOMove(destination, duration)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
-                if (data.destroyOnEnd)
-                    Destroy(shuriken);
+                Destroy(gameObject);
             });
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Comprobamos si el objeto que entró es el personaje
+        CharacterMovement character = collision.GetComponent<CharacterMovement>();
+        if (character == null) return;
+
+        // Verificamos si fue tocado por el shuriken
+        if (collision.IsTouching(GetComponent<Collider2D>()))
+        {
+            character.Die();
+        }
     }
 }

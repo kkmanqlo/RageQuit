@@ -10,14 +10,15 @@ public class Activator : MonoBehaviour
     public Animator animator;
 
     public CharacterMovement character;
+    private bool hasActivated = false;
 
-    public GameObject Shurikens;
+    public GameObject[] shurikens;
 
 
     void Start()
     {
         // Desactivar el collider de daño al inicio
-        ActivatorCollider.enabled = true;   
+        ActivatorCollider.enabled = true;
     }
 
     void Update()
@@ -25,7 +26,12 @@ public class Activator : MonoBehaviour
         if (character.hit.collider == ActivatorCollider)
         {
             animator.SetBool("isActive", true);
-            Shurikens.SetActive(true);
+            foreach (var shuriken in shurikens)
+            {
+                if (shuriken != null)
+                    shuriken.SetActive(true);
+            }
+            hasActivated = true; // Evita activarlos más veces
         }
         else animator.SetBool("isActive", false);
 
