@@ -10,7 +10,7 @@ public class Activator : MonoBehaviour
     public Animator animator;
 
     public CharacterMovement character;
-    private bool hasActivated = false;
+    private bool hasActivated;
 
     public GameObject[] shurikens;
 
@@ -23,7 +23,7 @@ public class Activator : MonoBehaviour
 
     void Update()
     {
-        if (character.hit.collider == ActivatorCollider)
+        if (!hasActivated && character.hit.collider == ActivatorCollider)
         {
             animator.SetBool("isActive", true);
             foreach (var shuriken in shurikens)
@@ -33,7 +33,11 @@ public class Activator : MonoBehaviour
             }
             hasActivated = true; // Evita activarlos más veces
         }
-        else animator.SetBool("isActive", false);
+        else if (character.hit.collider != ActivatorCollider)
+        {
+            animator.SetBool("isActive", false);
+            hasActivated = false; // Permitirá activarlo otra vez si vuelve a entrar
+        }
 
     }
 
