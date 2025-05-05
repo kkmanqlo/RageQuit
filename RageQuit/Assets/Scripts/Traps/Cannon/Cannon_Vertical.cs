@@ -29,6 +29,10 @@ public class Cannon : MonoBehaviour
 
     private Vector3 initialPosition;
 
+    [Header("Separación entre proyectiles")]
+    public float[] offsets = new float[] { 0f, 0f, 0f };
+    public float X = 0f;
+
 
     private void Start()
     {
@@ -60,15 +64,14 @@ public class Cannon : MonoBehaviour
 
 
     private void Shoot()
-    {
-        float[] yOffsets = new float[] { -0.30f, -0.16f, 0f }; // Ajusta para separar verticalmente los proyectiles
+    { 
 
         for (int i = 0; i < CannonProjectiles.Length; i++)
         {
             if (CannonProjectiles[i] == null) continue;
 
             // Calcula la posición de disparo con el offset vertical
-            Vector3 spawnPosition = transform.position + new Vector3(1.18f, yOffsets[i], 0f);
+            Vector3 spawnPosition = transform.position + new Vector3(X, offsets[i], 0f);
             Vector3 destination = spawnPosition + direction.normalized * distance;
 
             GameObject projectile = Instantiate(CannonProjectiles[i], spawnPosition, Quaternion.identity);

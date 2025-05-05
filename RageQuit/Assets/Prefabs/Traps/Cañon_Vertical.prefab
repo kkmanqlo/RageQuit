@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7254553234951458989}
   - component: {fileID: 5867635533396639238}
   m_Layer: 0
-  m_Name: "Ca\xF1on"
+  m_Name: "Ca\xF1on_Vertical"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
