@@ -22,6 +22,6 @@ public class DataSaveSlots : MonoBehaviour
         // Guardamos el idProgreso correspondiente al slot
         GameSession.idProgreso = slot;  // O usa un valor que identifique al slot de manera única
         // Cargamos la siguiente escena (por ejemplo, la selección de niveles)
-        SceneManager.LoadScene("SelectorNiveles");
+        SceneManager.LoadScene("LevelSelectionScene");
     }
 }

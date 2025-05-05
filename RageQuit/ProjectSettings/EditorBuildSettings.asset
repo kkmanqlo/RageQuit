@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScenes/DataSaveSelectionScene.unity
     guid: 3575412c4caaa3b479b7f00ddd4fe6f9
   - enabled: 1
+    path: Assets/Scenes/MenuScenes/LevelSelectionScene.unity
+    guid: 75c950f0f6b34bd4ca38fed36ff133e6
+  - enabled: 1
     path: Assets/Scenes/Levels/Tutorial.unity
     guid: a63f61800fd3a504c8b2ca777f29cae2
   - enabled: 1
