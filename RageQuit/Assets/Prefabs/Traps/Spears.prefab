@@ -184,4 +184,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationState: Spear
-  maxCycleOffset: 1
+  cycleOffset: 0

@@ -31,6 +31,7 @@ public class ShurikenProjectile : MonoBehaviour
         // Verificamos si fue tocado por el shuriken
         if (collision.IsTouching(GetComponent<Collider2D>()))
         {
+            DOTween.KillAll();
             character.Die();
         }
     }

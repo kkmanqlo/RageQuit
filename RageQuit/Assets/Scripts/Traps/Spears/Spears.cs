@@ -12,6 +12,7 @@ public class Spears : MonoBehaviour
         // Verificamos si fue tocado por el shuriken
         if (collision.IsTouching(GetComponent<Collider2D>()))
         {
+            GetComponent<Animator>().enabled = false;
             character.Die();
         }
     }

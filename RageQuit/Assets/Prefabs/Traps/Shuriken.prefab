@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7501981695659276250
 Transform:
   m_ObjectHideFlags: 0
@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: {x: 1, y: -1, z: 0}
   distance: 5
-  duration: 3
+  duration: 2
 --- !u!70 &2292334654597116786
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

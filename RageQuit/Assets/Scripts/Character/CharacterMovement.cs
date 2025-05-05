@@ -104,23 +104,23 @@ public class CharacterMovement : MonoBehaviour
     }
 
     public void Die()
-{
-    spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
     {
-        Time.timeScale = 0f;
-
-        DOVirtual.DelayedCall(0.2f, () =>
+        GetComponent<Animator>().enabled = false;
+        spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
         {
-            Time.timeScale = 1f;
+            Time.timeScale = 0f;
 
-            // Cancelar todos los tweens activos para evitar errores de objetos destruidos
-            DOTween.KillAll();
+            DOVirtual.DelayedCall(0.2f, () =>
+            {
+                Time.timeScale = 1f;
 
-            // Recargar escena
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }).SetUpdate(true);
-    });
-}
+                // Cancelar todos los tweens activos para evitar errores de objetos destruidos
+                DOTween.KillAll();
 
-
+                // Recargar escena
+                
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }).SetUpdate(true);
+        });
+    }
 }

@@ -12,21 +12,63 @@ public class Cannon : MonoBehaviour
     public GameObject[] CannonProjectiles; // Array de proyectiles (por ejemplo, 3 diferentes)
     public float fireInterval; // Intervalo entre disparos
 
+    [Header("Movimiento Vertical")]
+    public bool enableVerticalMovement = false;
+    public float verticalDistance = 2f;
+    public float verticalDuration = 2f;
+
+    [Header("Movimiento Horizontal")]
+    public bool enableHorizontalMovement = false;
+    public float horizontalDistance = 3f;
+    public float horizontalDuration = 2f;
+
+    [Header("Agitación Idle")]
+    public bool enableIdleFloat = false;
+    public float floatAmplitude = 0.2f;
+    public float floatDuration = 1f;
+
+    private Vector3 initialPosition;
+
+
     private void Start()
     {
         InvokeRepeating(nameof(Shoot), 0f, fireInterval);
+
+        initialPosition = transform.position;
+
+        if (enableVerticalMovement)
+        {
+            transform.DOMoveY(initialPosition.y + verticalDistance, verticalDuration)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.InOutSine);
+        }
+
+        if (enableHorizontalMovement)
+        {
+            transform.DOMoveX(initialPosition.x + horizontalDistance, horizontalDuration)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.InOutSine);
+        }
+
+        if (enableIdleFloat)
+        {
+            transform.DOMoveY(initialPosition.y + floatAmplitude, floatDuration)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetEase(Ease.InOutSine);
+        }
     }
+
 
     private void Shoot()
     {
-        float[] yOffsets = new float[] { -0.2f, 0f, 0.2f }; // Ajusta para separar verticalmente los proyectiles
+        float[] yOffsets = new float[] { -0.30f, -0.16f, 0f }; // Ajusta para separar verticalmente los proyectiles
 
         for (int i = 0; i < CannonProjectiles.Length; i++)
         {
             if (CannonProjectiles[i] == null) continue;
 
             // Calcula la posición de disparo con el offset vertical
-            Vector3 spawnPosition = transform.position + new Vector3(1f, yOffsets[i], 0.1f);
+            Vector3 spawnPosition = transform.position + new Vector3(1.18f, yOffsets[i], 0f);
             Vector3 destination = spawnPosition + direction.normalized * distance;
 
             GameObject projectile = Instantiate(CannonProjectiles[i], spawnPosition, Quaternion.identity);

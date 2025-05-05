@@ -9,10 +9,12 @@ public class CannonProjectiles : MonoBehaviour
         CharacterMovement character = collision.GetComponent<CharacterMovement>();
         if (character == null) return;
 
-        // Verificamos si fue tocado por el shuriken
+        // Verificamos si fue tocado por la bala de cañon
         if (collision.IsTouching(GetComponent<Collider2D>()))
         {
+            DOTween.KillAll();
             character.Die();
+            
         }
     }
 }
