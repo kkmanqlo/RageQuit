@@ -32,12 +32,13 @@ public class DBManager : MonoBehaviour
                 // Tabla ProgresoJugador
                 cmd.CommandText = @"
                     CREATE TABLE IF NOT EXISTS ProgresoJugador (
-                        idProgreso INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        idUsuario INTEGER NOT NULL,
-                        nivelActual INTEGER NOT NULL,
-                        tiempoTotal REAL NOT NULL,
-                        muertesTotales INTEGER NOT NULL,
-                        FOREIGN KEY(idUsuario) REFERENCES Usuarios(idUsuario)
+                    idProgreso INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    idUsuario INTEGER NOT NULL,
+                    slotNumero INTEGER NOT NULL CHECK (slotNumero IN (1, 2, 3)),
+                    nivelActual INTEGER NOT NULL,
+                    tiempoTotal REAL NOT NULL,
+                    muertesTotales INTEGER NOT NULL,
+                    FOREIGN KEY(idUsuario) REFERENCES Usuarios(idUsuario)
                     );
                 "; cmd.ExecuteNonQuery();
 
@@ -68,4 +69,31 @@ public class DBManager : MonoBehaviour
 
         Debug.Log("Base de datos creada en: " + dbPath);
     }
+
+    public void CrearDatasavesSiNoExisten(int idUsuario)
+{
+    using (var conexion = new SqliteConnection(dbPath))
+    {
+        conexion.Open();
+        using (var cmd = conexion.CreateCommand())
+        {
+            for (int slot = 1; slot <= 3; slot++)
+            {
+                cmd.CommandText = @"
+                    INSERT INTO ProgresoJugador (idUsuario, slotNumero, nivelActual, tiempoTotal, muertesTotales)
+                    SELECT @id, @slot, 0, 0.0, 0
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM ProgresoJugador 
+                        WHERE idUsuario = @id AND slotNumero = @slot
+                    );";
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@id", idUsuario);
+                cmd.Parameters.AddWithValue("@slot", slot);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+
+    Debug.Log("Datasaves creados si no existían para el usuario con ID: " + idUsuario);
+}
 }
