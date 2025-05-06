@@ -13,6 +13,13 @@ public class CharacterMovement : MonoBehaviour
     public float Speed;
     public float JumpForce;
 
+    // Coyote Time
+    private float coyoteTime = 0.11f; // Tiempo máximo para saltar después de dejar el suelo
+    private float coyoteTimer;
+
+    private bool hasJumpBuffered = false;
+
+
     //Metodos privados para que no se puedan modificar desde el editor
     private Rigidbody2D Rigidbody2D;
     private Queue<KeyCode> inputBuffer;
@@ -52,30 +59,35 @@ public class CharacterMovement : MonoBehaviour
         Animator.SetFloat("yvelocity", Rigidbody2D.linearVelocity.y);
         Animator.SetFloat("xvelocity", Rigidbody2D.linearVelocity.x);
 
-        hit = Physics2D.Raycast(transform.position, Vector3.down, 0.18f);
-        Debug.DrawRay(transform.position, Vector3.down * 0.18f, Color.red);
+        hit = Physics2D.Raycast(transform.position, Vector3.down, 0.15f);
+        Debug.DrawRay(transform.position, Vector3.down * 0.15f, Color.red);
         if (hit)
         {
             Grounded = true;
+            coyoteTimer = coyoteTime;
         }
-        else Grounded = false;
+        else
+        {
+            Grounded = false;
+            coyoteTimer -= Time.deltaTime;
+
+        }
 
 
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) && inputBuffer.Count == 0  && !hasJumpBuffered)
         {
             inputBuffer.Enqueue(KeyCode.W);
-            Invoke("quitarAccion", 0.1f); // Llamar a quitarAccion después de 0.5 segundos
+            hasJumpBuffered = true;
+            Invoke("quitarAccion", 0.3f); // Llamar a quitarAccion después de 0.5 segundos
         }
 
-        if (Grounded)
+        if (coyoteTimer > 0) // Solo si está realmente en el suelo
         {
-            if (inputBuffer.Count > 0)
+            if (inputBuffer.Count > 0 && inputBuffer.Peek() == KeyCode.W)
             {
-                if (inputBuffer.Peek() == KeyCode.W)
-                {
-                    Jump();
-                    inputBuffer.Dequeue();
-                }
+                coyoteTimer = 0;
+                Jump();
+                inputBuffer.Dequeue();
             }
         }
 
@@ -85,6 +97,7 @@ public class CharacterMovement : MonoBehaviour
     //Metodo para saltar
     private void Jump()
     {
+        Rigidbody2D.linearVelocity = new Vector2(Rigidbody2D.linearVelocity.x, 0);
         Rigidbody2D.AddForce(Vector2.up * JumpForce);
         Animator.SetTrigger("jump");
     }
@@ -93,6 +106,7 @@ public class CharacterMovement : MonoBehaviour
     {
         if (inputBuffer.Count > 0)
             inputBuffer.Dequeue();
+        hasJumpBuffered = false;
     }
 
 
@@ -118,7 +132,7 @@ public class CharacterMovement : MonoBehaviour
                 DOTween.KillAll();
 
                 // Recargar escena
-                
+
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }).SetUpdate(true);
         });
