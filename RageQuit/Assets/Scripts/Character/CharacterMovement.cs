@@ -6,10 +6,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-
 public class CharacterMovement : MonoBehaviour
 {
-    //Metodos públicos para que se puedan modificar desde el editor
+    //Metodos públicos para que se puedan modificar desde el editor// LayerMask para el suelo
     public float Speed;
     public float JumpForce;
 
@@ -18,7 +17,6 @@ public class CharacterMovement : MonoBehaviour
     private float coyoteTimer;
 
     private bool hasJumpBuffered = false;
-
 
     //Metodos privados para que no se puedan modificar desde el editor
     private Rigidbody2D Rigidbody2D;
@@ -30,6 +28,8 @@ public class CharacterMovement : MonoBehaviour
     private Color originalColor; // Color original del sprite
 
     public RaycastHit2D hit;
+
+    
 
     Vector2 startPosition;
 
