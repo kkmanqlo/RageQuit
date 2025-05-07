@@ -1,6 +1,8 @@
 using UnityEngine;
 using DG.Tweening;
 
+
+
 public class MovingPlatform : MonoBehaviour
 {
     [Header("Movimiento Vertical")]
@@ -20,8 +22,17 @@ public class MovingPlatform : MonoBehaviour
 
     private Vector3 initialPosition;
 
+    private Transform playerOnPlatform;
+    private Vector3 lastPlatformPosition;
+
+    public CharacterMovement character;
+
+
     void Start()
     {
+
+        lastPlatformPosition = transform.position;
+
         initialPosition = transform.position;
 
         if (enableVerticalMovement)
@@ -38,11 +49,40 @@ public class MovingPlatform : MonoBehaviour
                 .SetEase(Ease.InOutSine);
         }
 
+
         if (enableIdleFloat)
         {
             transform.DOMoveY(initialPosition.y + floatAmplitude, floatDuration)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine);
+        }
+    }
+
+    void Update()
+
+    {
+        if (playerOnPlatform)
+        {
+            Vector3 platformMovement = transform.position - lastPlatformPosition;
+            playerOnPlatform.position += platformMovement;
+        }
+
+        lastPlatformPosition = transform.position;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<CharacterMovement>())
+        {
+            playerOnPlatform = collision.transform;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<CharacterMovement>())
+        {
+            playerOnPlatform = null;
         }
     }
 }

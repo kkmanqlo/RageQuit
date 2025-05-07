@@ -3,32 +3,50 @@ using DG.Tweening;
 
 public class JumperScript : MonoBehaviour
 {
-    public CircleCollider2D detectionTrigger;
     public Animator animator;
-    public float jumpForce;
+    public float jumpForce = 10f;
+    public float resetTime = 0.2f;
 
     private bool activated = false;
 
+
+    private void Update()
+    {
+        
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.IsTouching(detectionTrigger) && !activated)
+        if (!activated)
         {
             CharacterMovement character = collision.GetComponent<CharacterMovement>();
             if (character != null)
             {
-                activated = true;
+                Rigidbody2D rb = character.GetComponent<Rigidbody2D>();
+                Animator anim = character.GetComponent<Animator>();
+                
 
-                animator.SetTrigger("Activate");
-                character.GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                if (rb != null)
+                {
+                    // Reiniciar velocidad vertical para mantener salto constante
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+                    rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
-                animator.SetTrigger("Deactivate");
-                activated = false;
-
-
+                    // Activar animación y flag
+                    activated = true;
+                    animator.SetTrigger("Activate");
+                    anim.SetTrigger("jump");
+                    
+                    // Llamar a la desactivación con retardo
+                    Invoke(nameof(ResetActivation), resetTime);
+                }
             }
         }
+        
     }
 
-
-
+        private void ResetActivation()
+    {
+        activated = false;
+        animator.SetTrigger("Deactivate");
+    }
 }
