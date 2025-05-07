@@ -27,7 +27,6 @@ public class ControladorMenu : MonoBehaviour
     {
         if (UsuarioManager.Instance.HayUsuarioRegistrado())
         {
-            VolverButton.escenaAnterior = SceneManager.GetActiveScene().name;
             // Ir directamente al juego
             SceneManager.LoadScene("DataSaveSelectionScene");
         }

@@ -7,22 +7,34 @@ using TMPro;
 
 public class LevelSelectorUI : MonoBehaviour
 {
-    public Transform container; 
-    public GameObject levelButtonPrefab; 
+    public Transform container;
+    public GameObject levelButtonPrefab;
     private string dbPath;
-    private GameObject popupActivo; 
+    private GameObject popupActivo;
 
-    void Start()
+    void OnEnable()
     {
+        if (container == null)
+        {
+            Debug.LogError("El contenedor de botones no está asignado en el inspector.");
+            return;
+        }
+
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         MostrarNivelesDesbloqueados();
     }
 
     void MostrarNivelesDesbloqueados()
     {
-        int idProgreso = GameSession.Instance.IdProgreso;
-        int nivelActual = 1; // Por defecto el tutorial
+        // Limpiar botones anteriores
+        foreach (Transform child in container)
+        {
+            Destroy(child.gameObject);
+        }
 
+        int idProgreso = GameSession.Instance.IdProgreso;
+        int nivelActual = 0;
+        
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
@@ -30,14 +42,23 @@ public class LevelSelectorUI : MonoBehaviour
             // Obtener nivel actual
             using (var cmd = conexion.CreateCommand())
             {
+
                 cmd.CommandText = "SELECT nivelActual FROM ProgresoJugador WHERE idProgreso = @id";
                 cmd.Parameters.AddWithValue("@id", idProgreso);
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
+                        Debug.Log("Se leyó correctamente el nivel actual.");
                         nivelActual = reader.GetInt32(0);
+                        Debug.Log($"Nivel actual: {nivelActual}");
                     }
+                    else
+                    {
+                        Debug.LogError("Error: No se encontró el nivel actual en la base de datos. No se mostrarán niveles.");
+                        return; // Salimos si no hay progreso válido
+                    }
+
                 }
             }
 
@@ -51,9 +72,10 @@ public class LevelSelectorUI : MonoBehaviour
                     {
                         int idNivel = reader.GetInt32(0);
                         string nombre = reader.GetString(1);
-
+                        Debug.Log($"Nivel encontrado (segunda vez): ID = {idNivel}, Nombre = {nombre}");
                         if (idNivel <= nivelActual)
                         {
+                            Debug.Log($"Creando botón (segunda vez) para el nivel: {nombre}");
                             CrearBotonNivel(idNivel, nombre, idProgreso);
                         }
                     }
@@ -64,6 +86,8 @@ public class LevelSelectorUI : MonoBehaviour
 
     void CrearBotonNivel(int idNivel, string nombreNivel, int idProgreso)
     {
+        Debug.Log($"Creando botón para el nivel: {nombreNivel}");
+        Debug.Log($"Valor de levelButtonPrefab antes de Instantiate: {levelButtonPrefab}"); // Añade esta línea
         GameObject obj = Instantiate(levelButtonPrefab, container);
         obj.transform.Find("NombreNivel").GetComponent<TextMeshProUGUI>().text = nombreNivel;
 
@@ -77,8 +101,8 @@ public class LevelSelectorUI : MonoBehaviour
         if (popupActivo != null)
             popupActivo.SetActive(false);
 
-        Transform popup = botonNivel.transform.Find("Popup") 
-                 ?? botonNivel.transform.Find("Button/Popup") 
+        Transform popup = botonNivel.transform.Find("Popup")
+                 ?? botonNivel.transform.Find("Button/Popup")
                  ?? botonNivel.transform.GetComponentInChildren<Transform>(true).Find("Popup");
 
         string textoStats = $"Nivel: {nombreNivel}\n";

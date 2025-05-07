@@ -71,29 +71,29 @@ public class DBManager : MonoBehaviour
     }
 
     public void CrearDatasavesSiNoExisten(int idUsuario)
-{
-    using (var conexion = new SqliteConnection(dbPath))
     {
-        conexion.Open();
-        using (var cmd = conexion.CreateCommand())
+        using (var conexion = new SqliteConnection(dbPath))
         {
-            for (int slot = 1; slot <= 3; slot++)
+            conexion.Open();
+            using (var cmd = conexion.CreateCommand())
             {
-                cmd.CommandText = @"
-                    INSERT INTO ProgresoJugador (idUsuario, slotNumero, nivelActual, tiempoTotal, muertesTotales)
-                    SELECT @id, @slot, 0, 0.0, 0
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM ProgresoJugador 
-                        WHERE idUsuario = @id AND slotNumero = @slot
-                    );";
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@id", idUsuario);
-                cmd.Parameters.AddWithValue("@slot", slot);
-                cmd.ExecuteNonQuery();
+                for (int slot = 1; slot <= 3; slot++)
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO ProgresoJugador (idUsuario, slotNumero, nivelActual, tiempoTotal, muertesTotales)
+                        SELECT @id, @slot, 1, 0.0, 0
+                        WHERE NOT EXISTS (
+                            SELECT 1 FROM ProgresoJugador 
+                            WHERE idUsuario = @id AND slotNumero = @slot
+                        );";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@id", idUsuario);
+                    cmd.Parameters.AddWithValue("@slot", slot);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
-    }
 
-    Debug.Log("Datasaves creados si no existían para el usuario con ID: " + idUsuario);
-}
+        Debug.Log("Datasaves creados si no existían para el usuario con ID: " + idUsuario);
+    }
 }
