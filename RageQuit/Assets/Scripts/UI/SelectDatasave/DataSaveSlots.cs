@@ -3,10 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Mono.Data.Sqlite;
 using TMPro;
+using System;
 
 public class DataSaveSlots : MonoBehaviour
 {
-   public Button[] slotButtons; // Asigna en el inspector (debe tener 3)
+    public Button[] slotButtons; // Asigna en el inspector (debe tener 3)
     private string dbPath;
 
     void Start()
@@ -60,7 +61,38 @@ public class DataSaveSlots : MonoBehaviour
         GameSession.Instance.SlotSeleccionado = slot;
         Debug.Log("Slot seleccionado: " + slot);
 
-        // Cambia de escena a selección de niveles
+        int idUsuario = UsuarioManager.Instance.IdUsuario;
+
+        using (var conexion = new SqliteConnection(dbPath))
+        {
+            conexion.Open();
+
+            using (var cmd = conexion.CreateCommand())
+            {
+                // Comprobar si ya existe ese progreso
+                cmd.CommandText = "SELECT COUNT(*) FROM ProgresoJugador WHERE idUsuario = @id AND slotNumero = @slot";
+                cmd.Parameters.AddWithValue("@id", idUsuario);
+                cmd.Parameters.AddWithValue("@slot", slot);
+
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (count == 0)
+                {
+                    Debug.Log("Insertando nuevo progreso con nivelActual = 1");
+
+                    cmd.CommandText = @"
+                    INSERT INTO ProgresoJugador (idUsuario, slotNumero, nivelActual, tiempoTotal, muertesTotales)
+                    VALUES (@id, @slot, 1, 0, 0)";
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Obtener el idProgreso recién creado o existente
+                cmd.CommandText = "SELECT idProgreso FROM ProgresoJugador WHERE idUsuario = @id AND slotNumero = @slot";
+                int idProgreso = Convert.ToInt32(cmd.ExecuteScalar());
+                GameSession.Instance.IdProgreso = idProgreso;
+            }
+        }
+
         UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelectionScene");
     }
 }

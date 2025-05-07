@@ -7,10 +7,17 @@ public class LevelGenerator : MonoBehaviour
     private string dbPath;
 
     void Start()
+{
+    if (!PlayerPrefs.HasKey("NivelesInsertados"))
     {
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         InsertarNivelesSiNoExisten();
+        PlayerPrefs.SetInt("NivelesInsertados", 1);
+        PlayerPrefs.Save(); 
     }
+
+    Destroy(gameObject);
+}
 
     void InsertarNivelesSiNoExisten()
     {
