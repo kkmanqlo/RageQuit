@@ -91,7 +91,6 @@ public class CharacterMovement : MonoBehaviour
             }
         }
 
-        Debug.Log("Grounded: " + Grounded + " | yVelocity: " + Rigidbody2D.linearVelocity.y + " | CurrentAnim: " + Animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"));
     }
 
     //Metodo para saltar

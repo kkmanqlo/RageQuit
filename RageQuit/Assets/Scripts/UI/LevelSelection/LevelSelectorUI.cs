@@ -12,6 +12,8 @@ public class LevelSelectorUI : MonoBehaviour
     private string dbPath;
     private GameObject popupActivo;
 
+    public GameObject popupGeneral; 
+
     void OnEnable()
     {
         if (container == null)
@@ -87,7 +89,7 @@ public class LevelSelectorUI : MonoBehaviour
     void CrearBotonNivel(int idNivel, string nombreNivel, int idProgreso)
     {
         Debug.Log($"Creando botón para el nivel: {nombreNivel}");
-        Debug.Log($"Valor de levelButtonPrefab antes de Instantiate: {levelButtonPrefab}"); // Añade esta línea
+        Debug.Log($"Valor de levelButtonPrefab antes de Instantiate: {levelButtonPrefab}");
         GameObject obj = Instantiate(levelButtonPrefab, container);
         obj.transform.Find("NombreNivel").GetComponent<TextMeshProUGUI>().text = nombreNivel;
 
@@ -101,9 +103,7 @@ public class LevelSelectorUI : MonoBehaviour
         if (popupActivo != null)
             popupActivo.SetActive(false);
 
-        Transform popup = botonNivel.transform.Find("Popup")
-                 ?? botonNivel.transform.Find("Button/Popup")
-                 ?? botonNivel.transform.GetComponentInChildren<Transform>(true).Find("Popup");
+        Transform popup = popupGeneral.transform;
 
         string textoStats = $"Nivel: {nombreNivel}\n";
 

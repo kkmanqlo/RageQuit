@@ -33,7 +33,7 @@ public class TextOnDatasaves : MonoBehaviour
 
     void CargarDatos()
     {
-        int idUsuario = UsuarioManager.Instance.IdUsuario;; 
+        int idUsuario = UsuarioManager.Instance.IdUsuario;
 
         // Datos predeterminados en caso de que los valores sean 0
         string ultimoNivel = "No hay niveles completados";
@@ -45,50 +45,58 @@ public class TextOnDatasaves : MonoBehaviour
             conexion.Open();
             using (var cmd = conexion.CreateCommand())
             {
-                // Consulta para obtener el progreso del jugador
-                cmd.CommandText = @"
-                SELECT nivelActual, tiempoTotal, muertesTotales
-                FROM ProgresoJugador
-                WHERE idUsuario = @idUsuario
-                LIMIT 1;
-            ";
-                cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
-
-                using (var reader = cmd.ExecuteReader())
+                for (int i = 1; i <= 3; i++)
                 {
-                    if (reader.Read())
+                    // Consulta para obtener el progreso del jugador y el nombre del nivel para cada slot
+                    cmd.CommandText = @"
+                        SELECT p.nivelActual, n.nombreNivel, p.tiempoTotal, p.muertesTotales
+                        FROM ProgresoJugador p
+                        INNER JOIN Niveles n ON p.nivelActual = n.idNivel
+                        WHERE p.idUsuario = @idUsuario AND p.slotNumero = @slot
+                        LIMIT 1;
+                    ";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
+                    cmd.Parameters.AddWithValue("@slot", i);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        // Recuperar los valores de la base de datos
-                        int nivelActual = reader.GetInt32(0);
-                        float tiempoTotal = reader.GetFloat(1);
-                        int muertes = reader.GetInt32(2);
-
-                        // Comprobar si los valores son 0 y, si lo son, usar los textos predeterminados
-                        if (nivelActual > 0)
+                        if (reader.Read())
                         {
-                            ultimoNivel = "Último Nivel completado: " + nivelActual;
-                        }
+                            int nivelActual = reader.GetInt32(0);
+                            string nombreNivel = reader.GetString(1); 
+                            float tiempoTotal = reader.GetFloat(2);
+                            int muertes = reader.GetInt32(3);
 
-                        if (tiempoTotal > 0)
-                        {
-                            tiempoJugado = "Tiempo Jugado: " + tiempoTotal + " horas";
-                        }
+                            // Comprobar si los valores son 0 y, si lo son, usar los textos predeterminados
+                            if (nivelActual > 0)
+                            {
+                                ultimoNivel = "Nivel Actual: " + nombreNivel; // Mostrar nombre del nivel
+                            }
 
-                        if (muertes > 0)
-                        {
-                            muertesTotales = "Muertes Totales: " + muertes;
+                            if (tiempoTotal > 0)
+                            {
+                                tiempoJugado = "Tiempo Jugado: " + tiempoTotal + " horas";
+                            }
+
+                            if (muertes > 0)
+                            {
+                                muertesTotales = "Muertes Totales: " + muertes;
+                            }
                         }
                     }
+
+                    // Asignar los datos al botón correspondiente
+                    if (i == 1)
+                        AsignarDatosABoton(button1NivelText, button1TiempoText, button1MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
+                    else if (i == 2)
+                        AsignarDatosABoton(button2NivelText, button2TiempoText, button2MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
+                    else if (i == 3)
+                        AsignarDatosABoton(button3NivelText, button3TiempoText, button3MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
                 }
             }
         }
-
-        // Asignar los datos a los TextMeshPro de los tres botones
-        AsignarDatosABoton(button1NivelText, button1TiempoText, button1MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
-        AsignarDatosABoton(button2NivelText, button2TiempoText, button2MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
-        AsignarDatosABoton(button3NivelText, button3TiempoText, button3MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
     }
-
 
     void AsignarDatosABoton(TextMeshProUGUI nivelText, TextMeshProUGUI tiempoText, TextMeshProUGUI muertesText, string ultimoNivel, string tiempoJugado, string muertesTotales)
     {
