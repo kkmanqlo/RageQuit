@@ -1,7 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mono.Data.Sqlite;
+using Mono.Data.Sqlite;// Asegúrate de que el namespace sea correcto
 
 public class NextLevelDoorScript : MonoBehaviour
 {
@@ -25,6 +25,7 @@ public class NextLevelDoorScript : MonoBehaviour
         }
 
         ActualizarProgresoEnBD();
+        LevelStatsManager.Instance.GuardarEstadisticas();
 
     }
 
