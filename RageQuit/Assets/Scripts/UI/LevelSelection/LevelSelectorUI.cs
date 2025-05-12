@@ -12,7 +12,7 @@ public class LevelSelectorUI : MonoBehaviour
     private string dbPath;
     private GameObject popupActivo;
 
-    public GameObject popupGeneral; 
+    public GameObject popupGeneral;
 
     void OnEnable()
     {
@@ -36,7 +36,7 @@ public class LevelSelectorUI : MonoBehaviour
 
         int idProgreso = GameSession.Instance.IdProgreso;
         int nivelActual = 0;
-        
+
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
@@ -94,7 +94,10 @@ public class LevelSelectorUI : MonoBehaviour
         obj.transform.Find("NombreNivel").GetComponent<TextMeshProUGUI>().text = nombreNivel;
 
         Button boton = obj.GetComponentInChildren<Button>();
-        boton.onClick.AddListener(() => MostrarPopupNivel(obj, idNivel, nombreNivel, idProgreso));
+
+        int capturedIdNivel = idNivel;
+        boton.onClick.AddListener(() => MostrarPopupNivel(obj, capturedIdNivel, nombreNivel, idProgreso));
+
     }
 
     void MostrarPopupNivel(GameObject botonNivel, int idNivel, string nombreNivel, int idProgreso)
@@ -107,29 +110,36 @@ public class LevelSelectorUI : MonoBehaviour
 
         string textoStats = $"Nivel: {nombreNivel}\n";
 
-        using (var conexion = new SqliteConnection(dbPath))
+        if (idNivel == 1)
         {
-            conexion.Open();
-            using (var cmd = conexion.CreateCommand())
+            textoStats += "Este nivel es un tutorial,\n";
+            textoStats += "no se registran stats.";
+        }
+        else
+        {
+            using (var conexion = new SqliteConnection(dbPath))
             {
-                cmd.CommandText = @"
-                    SELECT muertes, tiempo, mejorTiempo 
-                    FROM EstadisticasNivel 
-                    WHERE idNivel = @nivel AND idProgreso = @progreso";
-                cmd.Parameters.AddWithValue("@nivel", idNivel);
-                cmd.Parameters.AddWithValue("@progreso", idProgreso);
-
-                using (var reader = cmd.ExecuteReader())
+                conexion.Open();
+                using (var cmd = conexion.CreateCommand())
                 {
-                    if (reader.Read())
+                    cmd.CommandText = @"
+                SELECT muertes, mejorTiempo 
+                FROM EstadisticasNivel 
+                WHERE idNivel = @nivel AND idProgreso = @progreso";
+                    cmd.Parameters.AddWithValue("@nivel", idNivel);
+                    cmd.Parameters.AddWithValue("@progreso", idProgreso);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        textoStats += $"Muertes: {reader.GetInt32(0)}\n";
-                        textoStats += $"Tiempo: {reader.GetFloat(1):F2}s\n";
-                        textoStats += $"Mejor Tiempo: {reader.GetFloat(2):F2}s";
-                    }
-                    else
-                    {
-                        textoStats += "Sin estadísticas aún.";
+                        if (reader.Read())
+                        {
+                            textoStats += $"Muertes: {reader.GetInt32(0)}\n";
+                            textoStats += $"Mejor Tiempo: {reader.GetFloat(1):F2}s";
+                        }
+                        else
+                        {
+                            textoStats += "Sin stats disponibles.";
+                        }
                     }
                 }
             }

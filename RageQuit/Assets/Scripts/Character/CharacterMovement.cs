@@ -119,6 +119,15 @@ public class CharacterMovement : MonoBehaviour
     public void Die()
     {
         GetComponent<Animator>().enabled = false;
+
+        string nombreEscena = SceneManager.GetActiveScene().name;
+        int idNivelActual = NivelMap.GetIdNivelPorNombre(nombreEscena);
+
+        if (idNivelActual != 1)
+        {
+            LevelStatsManager.Instance.RegistrarMuerte();
+        }
+
         spriteRenderer.DOColor(Color.red, 0.05f).OnComplete(() =>
         {
             Time.timeScale = 0f;

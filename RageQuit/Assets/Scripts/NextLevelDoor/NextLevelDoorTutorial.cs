@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mono.Data.Sqlite;
 
-public class NextLevelDoorScript : MonoBehaviour
+public class NextLevelDoorTutorial : MonoBehaviour
 {
     [Tooltip("¿Usar siguiente escena en el build index automáticamente?")]
     public bool autoLoadNextScene = true;
@@ -25,47 +25,39 @@ public class NextLevelDoorScript : MonoBehaviour
         }
 
         ActualizarProgresoEnBD();
-        LevelStatsManager.Instance.GuardarEstadisticas();
-
     }
 
     private void LoadScene()
-{
-    DOTween.KillAll();
-
-    if (autoLoadNextScene)
     {
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        DOTween.KillAll();
 
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+        if (autoLoadNextScene)
         {
-            string nextSceneName = SceneUtility.GetScenePathByBuildIndex(nextSceneIndex);
-            nextSceneName = System.IO.Path.GetFileNameWithoutExtension(nextSceneName);
+            int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
-            LevelStatsManager.PrepararCargaDeNivel(nextSceneName);
-            SceneManager.LoadScene(nextSceneIndex);
+            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                SceneManager.LoadScene(nextSceneIndex);
+            }
+            else
+            {
+                Debug.LogWarning("No hay más escenas en el build index.");
+            }
         }
         else
         {
-            Debug.LogWarning("No hay más escenas en el build index.");
+            if (!string.IsNullOrEmpty(sceneToLoad))
+            {
+                SceneManager.LoadScene(sceneToLoad);
+            }
+            else
+            {
+                Debug.LogError("No se ha asignado el nombre de la escena a cargar.");
+            }
         }
     }
-    else
-    {
-        if (!string.IsNullOrEmpty(sceneToLoad))
-        {
-            LevelStatsManager.PrepararCargaDeNivel(sceneToLoad);
-            SceneManager.LoadScene(sceneToLoad);
-        }
-        else
-        {
-            Debug.LogError("No se ha asignado el nombre de la escena a cargar.");
-        }
-    }
-}
 
-
-    private void ActualizarProgresoEnBD()
+     private void ActualizarProgresoEnBD()
     {
         string dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         int idProgreso = GameSession.Instance.IdProgreso;
@@ -92,6 +84,4 @@ public class NextLevelDoorScript : MonoBehaviour
 
         Debug.Log($"Progreso actualizado. Nuevo nivel actual: {siguienteNivel}");
     }
-
-
 }

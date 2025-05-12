@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mono.Data.Sqlite;
+using System.Collections.Generic;
 
 public class LevelStatsManager : MonoBehaviour
 {
@@ -7,17 +8,21 @@ public class LevelStatsManager : MonoBehaviour
 
     private float tiempoNivel;
     private int muertes;
-    private int idNivel;
-    private int idProgreso;
 
+    private int idProgreso;
     private string dbPath;
+
+    public int IdNivel => NivelMap.GetIdNivelPorNombre(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+    private static HashSet<string> escenasReiniciadas = new HashSet<string>();
+
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // 🔥 Mantiene el objeto entre escenas
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -29,22 +34,38 @@ public class LevelStatsManager : MonoBehaviour
     void Start()
     {
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
+    }
+
+    public void Inicializar()
+    {
+        idProgreso = GameSession.Instance.IdProgreso;
+        tiempoNivel = 0f;
+        muertes = 0;
+
+        Debug.Log($"Inicializando LevelStatsManager. idProgreso: {idProgreso}");
+    }
+
+    public static void PrepararCargaDeNivel(string nombreEscena)
+    {
+        escenasReiniciadas.Remove(nombreEscena);
+    }
+
+
+    public void ReiniciarEstadisticas()
+    {
         string escenaActual = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-        if (escenaActual.StartsWith("Nivel"))
+        if (escenasReiniciadas.Contains(escenaActual))
         {
-            // Inicializa las estadísticas del nivel
-            tiempoNivel = 0f;
-            muertes = 0;
-            idProgreso = GameSession.Instance.IdProgreso;
-            idNivel = NivelMap.GetIdNivelPorNombre(escenaActual);
+            Debug.Log("Ya se reiniciaron las estadísticas para esta escena.");
+            return;
         }
-        else if (escenaActual == "MenuPrincipal" || escenaActual == "DataSaveSelectionScene" || escenaActual == "LevelSelectionScene")
-        {
-            tiempoNivel = 0f;
-            muertes = 0;
-        }
-        
+
+        tiempoNivel = 0f;
+        muertes = 0;
+        escenasReiniciadas.Add(escenaActual);
+
+        Debug.Log("Estadísticas reiniciadas.");
     }
 
     void Update()
@@ -55,10 +76,13 @@ public class LevelStatsManager : MonoBehaviour
     public void RegistrarMuerte()
     {
         muertes++;
+        Debug.Log($"Muertes registradas: {muertes}");
     }
 
     public void GuardarEstadisticas()
     {
+        Debug.Log($"[DEBUG] GuardarEstadisticas() llamado. Muertes: {muertes}, Tiempo: {tiempoNivel}");
+
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
@@ -71,7 +95,7 @@ public class LevelStatsManager : MonoBehaviour
             using (var cmdCheck = conexion.CreateCommand())
             {
                 cmdCheck.CommandText = "SELECT muertes, mejorTiempo FROM EstadisticasNivel WHERE idNivel = @nivel AND idProgreso = @progreso";
-                cmdCheck.Parameters.AddWithValue("@nivel", idNivel);
+                cmdCheck.Parameters.AddWithValue("@nivel", IdNivel);
                 cmdCheck.Parameters.AddWithValue("@progreso", idProgreso);
 
                 using (var reader = cmdCheck.ExecuteReader())
@@ -90,10 +114,10 @@ public class LevelStatsManager : MonoBehaviour
                 using (var cmdUpdate = conexion.CreateCommand())
                 {
                     cmdUpdate.CommandText = "UPDATE EstadisticasNivel SET muertes = @muertes, tiempo = @tiempo, mejorTiempo = @mejorTiempo WHERE idNivel = @nivel AND idProgreso = @progreso";
-                    cmdUpdate.Parameters.AddWithValue("@muertes", Mathf.Min(muertes, muertesPrevias));
+                    cmdUpdate.Parameters.AddWithValue("@muertes", muertes + muertesPrevias);
                     cmdUpdate.Parameters.AddWithValue("@tiempo", tiempoNivel);
                     cmdUpdate.Parameters.AddWithValue("@mejorTiempo", Mathf.Min(tiempoNivel, mejorTiempoPrevio));
-                    cmdUpdate.Parameters.AddWithValue("@nivel", idNivel);
+                    cmdUpdate.Parameters.AddWithValue("@nivel", IdNivel);
                     cmdUpdate.Parameters.AddWithValue("@progreso", idProgreso);
                     cmdUpdate.ExecuteNonQuery();
                 }
@@ -104,7 +128,7 @@ public class LevelStatsManager : MonoBehaviour
                 {
                     cmdInsert.CommandText = "INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo) VALUES (@progreso, @nivel, @muertes, @tiempo, @mejorTiempo)";
                     cmdInsert.Parameters.AddWithValue("@progreso", idProgreso);
-                    cmdInsert.Parameters.AddWithValue("@nivel", idNivel);
+                    cmdInsert.Parameters.AddWithValue("@nivel", IdNivel);
                     cmdInsert.Parameters.AddWithValue("@muertes", muertes);
                     cmdInsert.Parameters.AddWithValue("@tiempo", tiempoNivel);
                     cmdInsert.Parameters.AddWithValue("@mejorTiempo", tiempoNivel);
@@ -129,6 +153,7 @@ public class LevelStatsManager : MonoBehaviour
             }
         }
 
-        Debug.Log("📊 Estadísticas guardadas correctamente.");
+        Debug.Log($"Guardando stats para idNivel: {IdNivel}, idProgreso: {idProgreso}");
+
     }
 }

@@ -89,10 +89,9 @@ public class DataSaveSlots : MonoBehaviour
                 // Obtener el idProgreso recién creado o existente
                 cmd.CommandText = "SELECT idProgreso FROM ProgresoJugador WHERE idUsuario = @id AND slotNumero = @slot";
                 int idProgreso = Convert.ToInt32(cmd.ExecuteScalar());
-                GameSession.Instance.IdProgreso = idProgreso;
+                GameSession.Instance.IdProgreso = idProgreso;          
             }
         }
-
         UnityEngine.SceneManagement.SceneManager.LoadScene("LevelSelectionScene");
     }
 }
