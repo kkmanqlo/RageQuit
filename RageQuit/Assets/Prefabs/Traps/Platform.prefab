@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3120376536853230535}
   - component: {fileID: 7522700159443534001}
   - component: {fileID: 7390270188165337865}
-  - component: {fileID: 7502121211931007812}
+  - component: {fileID: 1317820460023411098}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Untagged
@@ -158,7 +158,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.26931083, y: 0.047932185}
   m_EdgeRadius: 0
---- !u!114 &7502121211931007812
+--- !u!114 &1317820460023411098
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e689b324c2cb2fd409ebb476bd3fa449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableVerticalMovement: 0
-  verticalDistance: 2
+  enableVerticalMovement: 1
+  verticalDistance: 3.93
   verticalDuration: 2
   enableHorizontalMovement: 0
   horizontalDistance: 3
@@ -179,4 +179,3 @@ MonoBehaviour:
   enableIdleFloat: 0
   floatAmplitude: 0.2
   floatDuration: 1
-  character: {fileID: 0}

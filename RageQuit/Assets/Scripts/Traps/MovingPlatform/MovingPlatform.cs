@@ -25,7 +25,6 @@ public class MovingPlatform : MonoBehaviour
     private Transform playerOnPlatform;
     private Vector3 lastPlatformPosition;
 
-    public CharacterMovement character;
 
 
     void Start()
