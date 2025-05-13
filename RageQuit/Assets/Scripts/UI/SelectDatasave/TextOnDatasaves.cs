@@ -46,6 +46,7 @@ public class TextOnDatasaves : MonoBehaviour
                     string ultimoNivel = "No hay niveles completados";
                     string tiempoJugado = "No hay tiempo jugado";
                     string muertesTotales = "No hay muertes registradas";
+                    string tiempoFormateado = "No hay tiempo jugado";
 
                     // Consulta para obtener el progreso del jugador y el nombre del nivel para cada slot
                     cmd.CommandText = @"
@@ -71,8 +72,12 @@ public class TextOnDatasaves : MonoBehaviour
                             if (nivelActual > 0)
                                 ultimoNivel = "Nivel Actual: " + nombreNivel;
 
-                            if (tiempoTotal > 0)
-                                tiempoJugado = "Tiempo Jugado: " + tiempoTotal + " horas";
+                            if (tiempoTotal > 0){
+                                tiempoFormateado = System.TimeSpan.FromSeconds(tiempoTotal).ToString(@"hh\:mm\:ss");
+                                tiempoJugado = "Tiempo Jugado: " + tiempoFormateado;
+                            } else {
+                                tiempoJugado = "No hay tiempo jugado";
+                            }
 
                             if (muertes > 0)
                                 muertesTotales = "Muertes Totales: " + muertes;

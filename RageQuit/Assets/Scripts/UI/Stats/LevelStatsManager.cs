@@ -6,16 +6,15 @@ public class LevelStatsManager : MonoBehaviour
 {
     public static LevelStatsManager Instance;
 
-    private float tiempoNivel;
     private int muertes;
-
     private int idProgreso;
     private string dbPath;
 
     public int IdNivel => NivelMap.GetIdNivelPorNombre(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    public float TiempoActual => Time.timeSinceLevelLoad;
+    public int MuertesActuales => muertes;
 
     private static HashSet<string> escenasReiniciadas = new HashSet<string>();
-
 
     void Awake()
     {
@@ -30,7 +29,6 @@ public class LevelStatsManager : MonoBehaviour
         }
     }
 
-
     void Start()
     {
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
@@ -39,9 +37,7 @@ public class LevelStatsManager : MonoBehaviour
     public void Inicializar()
     {
         idProgreso = GameSession.Instance.IdProgreso;
-        tiempoNivel = 0f;
         muertes = 0;
-
         Debug.Log($"Inicializando LevelStatsManager. idProgreso: {idProgreso}");
     }
 
@@ -49,7 +45,6 @@ public class LevelStatsManager : MonoBehaviour
     {
         escenasReiniciadas.Remove(nombreEscena);
     }
-
 
     public void ReiniciarEstadisticas()
     {
@@ -61,23 +56,15 @@ public class LevelStatsManager : MonoBehaviour
             return;
         }
 
-        tiempoNivel = 0f;
         muertes = 0;
         escenasReiniciadas.Add(escenaActual);
-
         Debug.Log("Estadísticas reiniciadas.");
-    }
-
-    void Update()
-    {
-        tiempoNivel += Time.deltaTime;
     }
 
     public void RegistrarMuerte()
     {
         muertes++;
         Debug.Log($"Muertes registradas: {muertes}");
-
         RegistrarMuerteEnDB();
     }
 
@@ -87,7 +74,7 @@ public class LevelStatsManager : MonoBehaviour
         {
             conexion.Open();
 
-            // 1. Actualizar o insertar muertes en EstadisticasNivel
+            // Insertar o actualizar muertes en EstadisticasNivel
             using (var cmd = conexion.CreateCommand())
             {
                 cmd.CommandText = @"
@@ -101,7 +88,7 @@ public class LevelStatsManager : MonoBehaviour
                 cmd.ExecuteNonQuery();
             }
 
-            // 2. Actualizar muertesTotales en ProgresoJugador
+            // Actualizar muertes totales
             using (var cmdProgreso = conexion.CreateCommand())
             {
                 cmdProgreso.CommandText = @"
@@ -119,7 +106,8 @@ public class LevelStatsManager : MonoBehaviour
 
     public void GuardarTiempoFinal()
     {
-        Debug.Log($"[DEBUG] GuardarTiempoFinal() llamado. Tiempo: {tiempoNivel}");
+        float tiempoFinal = TiempoActual;
+        Debug.Log($"[DEBUG] GuardarTiempoFinal() llamado. Tiempo: {tiempoFinal}");
 
         using (var conexion = new SqliteConnection(dbPath))
         {
@@ -149,8 +137,8 @@ public class LevelStatsManager : MonoBehaviour
                 using (var cmdUpdate = conexion.CreateCommand())
                 {
                     cmdUpdate.CommandText = "UPDATE EstadisticasNivel SET tiempo = @tiempo, mejorTiempo = @mejorTiempo WHERE idNivel = @nivel AND idProgreso = @progreso";
-                    cmdUpdate.Parameters.AddWithValue("@tiempo", tiempoNivel);
-                    cmdUpdate.Parameters.AddWithValue("@mejorTiempo", Mathf.Min(tiempoNivel, mejorTiempoPrevio));
+                    cmdUpdate.Parameters.AddWithValue("@tiempo", tiempoFinal);
+                    cmdUpdate.Parameters.AddWithValue("@mejorTiempo", Mathf.Min(tiempoFinal, mejorTiempoPrevio));
                     cmdUpdate.Parameters.AddWithValue("@nivel", IdNivel);
                     cmdUpdate.Parameters.AddWithValue("@progreso", idProgreso);
                     cmdUpdate.ExecuteNonQuery();
@@ -163,13 +151,13 @@ public class LevelStatsManager : MonoBehaviour
                     cmdInsert.CommandText = "INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo) VALUES (@progreso, @nivel, 0, @tiempo, @mejorTiempo)";
                     cmdInsert.Parameters.AddWithValue("@progreso", idProgreso);
                     cmdInsert.Parameters.AddWithValue("@nivel", IdNivel);
-                    cmdInsert.Parameters.AddWithValue("@tiempo", tiempoNivel);
-                    cmdInsert.Parameters.AddWithValue("@mejorTiempo", tiempoNivel);
+                    cmdInsert.Parameters.AddWithValue("@tiempo", tiempoFinal);
+                    cmdInsert.Parameters.AddWithValue("@mejorTiempo", tiempoFinal);
                     cmdInsert.ExecuteNonQuery();
                 }
             }
 
-            // Actualizar tiempo total
+            // Actualizar tiempo total en ProgresoJugador
             using (var cmdUpdateProgreso = conexion.CreateCommand())
             {
                 cmdUpdateProgreso.CommandText = @"
@@ -177,7 +165,7 @@ public class LevelStatsManager : MonoBehaviour
                 SET tiempoTotal = tiempoTotal + @tiempo
                 WHERE idProgreso = @idProgreso";
 
-                cmdUpdateProgreso.Parameters.AddWithValue("@tiempo", tiempoNivel);
+                cmdUpdateProgreso.Parameters.AddWithValue("@tiempo", tiempoFinal);
                 cmdUpdateProgreso.Parameters.AddWithValue("@idProgreso", idProgreso);
                 cmdUpdateProgreso.ExecuteNonQuery();
             }

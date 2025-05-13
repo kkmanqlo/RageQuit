@@ -7,7 +7,7 @@ public class BGMusicManager : MonoBehaviour
     private AudioSource audioSource;
 
     // Escenas donde debe sonar la música
-    private string[] escenasConMusica = { "MenuPrincipal", "DataSaveSelectionScene" };
+    private string[] escenasConMusica = { "MenuPrincipal", "DataSaveSelectionScene", "LevelSelectionScene" };
     void Awake()
     {
         if (instance == null)
@@ -19,7 +19,7 @@ public class BGMusicManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); // Evita duplicados
+            Destroy(gameObject);
         }
     }
 
