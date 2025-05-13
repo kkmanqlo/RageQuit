@@ -77,24 +77,60 @@ public class LevelStatsManager : MonoBehaviour
     {
         muertes++;
         Debug.Log($"Muertes registradas: {muertes}");
+
+        RegistrarMuerteEnDB();
     }
 
-    public void GuardarEstadisticas()
+    private void RegistrarMuerteEnDB()
     {
-        Debug.Log($"[DEBUG] GuardarEstadisticas() llamado. Muertes: {muertes}, Tiempo: {tiempoNivel}");
+        using (var conexion = new SqliteConnection(dbPath))
+        {
+            conexion.Open();
+
+            // 1. Actualizar o insertar muertes en EstadisticasNivel
+            using (var cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = @"
+                INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo)
+                VALUES (@progreso, @nivel, 1, 0, 0)
+                ON CONFLICT(idProgreso, idNivel)
+                DO UPDATE SET muertes = muertes + 1";
+
+                cmd.Parameters.AddWithValue("@progreso", idProgreso);
+                cmd.Parameters.AddWithValue("@nivel", IdNivel);
+                cmd.ExecuteNonQuery();
+            }
+
+            // 2. Actualizar muertesTotales en ProgresoJugador
+            using (var cmdProgreso = conexion.CreateCommand())
+            {
+                cmdProgreso.CommandText = @"
+                UPDATE ProgresoJugador
+                SET muertesTotales = muertesTotales + 1
+                WHERE idProgreso = @idProgreso";
+
+                cmdProgreso.Parameters.AddWithValue("@idProgreso", idProgreso);
+                cmdProgreso.ExecuteNonQuery();
+            }
+        }
+
+        Debug.Log("[DEBUG] Muerte registrada en DB (individual)");
+    }
+
+    public void GuardarTiempoFinal()
+    {
+        Debug.Log($"[DEBUG] GuardarTiempoFinal() llamado. Tiempo: {tiempoNivel}");
 
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
 
             bool existeRegistro = false;
-            int muertesPrevias = 0;
             float mejorTiempoPrevio = 0f;
 
-            // Leer si ya hay estadísticas
             using (var cmdCheck = conexion.CreateCommand())
             {
-                cmdCheck.CommandText = "SELECT muertes, mejorTiempo FROM EstadisticasNivel WHERE idNivel = @nivel AND idProgreso = @progreso";
+                cmdCheck.CommandText = "SELECT mejorTiempo FROM EstadisticasNivel WHERE idNivel = @nivel AND idProgreso = @progreso";
                 cmdCheck.Parameters.AddWithValue("@nivel", IdNivel);
                 cmdCheck.Parameters.AddWithValue("@progreso", idProgreso);
 
@@ -103,8 +139,7 @@ public class LevelStatsManager : MonoBehaviour
                     if (reader.Read())
                     {
                         existeRegistro = true;
-                        muertesPrevias = reader.GetInt32(0);
-                        mejorTiempoPrevio = reader.GetFloat(1);
+                        mejorTiempoPrevio = reader.GetFloat(0);
                     }
                 }
             }
@@ -113,8 +148,7 @@ public class LevelStatsManager : MonoBehaviour
             {
                 using (var cmdUpdate = conexion.CreateCommand())
                 {
-                    cmdUpdate.CommandText = "UPDATE EstadisticasNivel SET muertes = @muertes, tiempo = @tiempo, mejorTiempo = @mejorTiempo WHERE idNivel = @nivel AND idProgreso = @progreso";
-                    cmdUpdate.Parameters.AddWithValue("@muertes", muertes + muertesPrevias);
+                    cmdUpdate.CommandText = "UPDATE EstadisticasNivel SET tiempo = @tiempo, mejorTiempo = @mejorTiempo WHERE idNivel = @nivel AND idProgreso = @progreso";
                     cmdUpdate.Parameters.AddWithValue("@tiempo", tiempoNivel);
                     cmdUpdate.Parameters.AddWithValue("@mejorTiempo", Mathf.Min(tiempoNivel, mejorTiempoPrevio));
                     cmdUpdate.Parameters.AddWithValue("@nivel", IdNivel);
@@ -126,34 +160,29 @@ public class LevelStatsManager : MonoBehaviour
             {
                 using (var cmdInsert = conexion.CreateCommand())
                 {
-                    cmdInsert.CommandText = "INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo) VALUES (@progreso, @nivel, @muertes, @tiempo, @mejorTiempo)";
+                    cmdInsert.CommandText = "INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo) VALUES (@progreso, @nivel, 0, @tiempo, @mejorTiempo)";
                     cmdInsert.Parameters.AddWithValue("@progreso", idProgreso);
                     cmdInsert.Parameters.AddWithValue("@nivel", IdNivel);
-                    cmdInsert.Parameters.AddWithValue("@muertes", muertes);
                     cmdInsert.Parameters.AddWithValue("@tiempo", tiempoNivel);
                     cmdInsert.Parameters.AddWithValue("@mejorTiempo", tiempoNivel);
                     cmdInsert.ExecuteNonQuery();
                 }
             }
 
-            // Actualizar progreso general
+            // Actualizar tiempo total
             using (var cmdUpdateProgreso = conexion.CreateCommand())
             {
                 cmdUpdateProgreso.CommandText = @"
-                    UPDATE ProgresoJugador 
-                    SET 
-                        muertesTotales = muertesTotales + @muertes,
-                        tiempoTotal = tiempoTotal + @tiempo
-                    WHERE idProgreso = @idProgreso";
+                UPDATE ProgresoJugador 
+                SET tiempoTotal = tiempoTotal + @tiempo
+                WHERE idProgreso = @idProgreso";
 
-                cmdUpdateProgreso.Parameters.AddWithValue("@muertes", muertes);
                 cmdUpdateProgreso.Parameters.AddWithValue("@tiempo", tiempoNivel);
                 cmdUpdateProgreso.Parameters.AddWithValue("@idProgreso", idProgreso);
                 cmdUpdateProgreso.ExecuteNonQuery();
             }
         }
 
-        Debug.Log($"Guardando stats para idNivel: {IdNivel}, idProgreso: {idProgreso}");
-
+        Debug.Log($"Tiempo final guardado para idNivel: {IdNivel}, idProgreso: {idProgreso}");
     }
 }

@@ -25,7 +25,7 @@ public class NextLevelDoorScript : MonoBehaviour
         }
 
         ActualizarProgresoEnBD();
-        LevelStatsManager.Instance.GuardarEstadisticas();
+        LevelStatsManager.Instance.GuardarTiempoFinal();
 
     }
 

@@ -35,11 +35,6 @@ public class TextOnDatasaves : MonoBehaviour
     {
         int idUsuario = UsuarioManager.Instance.IdUsuario;
 
-        // Datos predeterminados en caso de que los valores sean 0
-        string ultimoNivel = "No hay niveles completados";
-        string tiempoJugado = "No hay tiempo jugado";
-        string muertesTotales = "No hay muertes registradas";
-
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
@@ -47,14 +42,19 @@ public class TextOnDatasaves : MonoBehaviour
             {
                 for (int i = 1; i <= 3; i++)
                 {
+                    // Reiniciar textos predeterminados por slot
+                    string ultimoNivel = "No hay niveles completados";
+                    string tiempoJugado = "No hay tiempo jugado";
+                    string muertesTotales = "No hay muertes registradas";
+
                     // Consulta para obtener el progreso del jugador y el nombre del nivel para cada slot
                     cmd.CommandText = @"
-                        SELECT p.nivelActual, n.nombreNivel, p.tiempoTotal, p.muertesTotales
-                        FROM ProgresoJugador p
-                        INNER JOIN Niveles n ON p.nivelActual = n.idNivel
-                        WHERE p.idUsuario = @idUsuario AND p.slotNumero = @slot
-                        LIMIT 1;
-                    ";
+                    SELECT p.nivelActual, n.nombreNivel, p.tiempoTotal, p.muertesTotales
+                    FROM ProgresoJugador p
+                    INNER JOIN Niveles n ON p.nivelActual = n.idNivel
+                    WHERE p.idUsuario = @idUsuario AND p.slotNumero = @slot
+                    LIMIT 1;
+                ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
                     cmd.Parameters.AddWithValue("@slot", i);
@@ -64,25 +64,18 @@ public class TextOnDatasaves : MonoBehaviour
                         if (reader.Read())
                         {
                             int nivelActual = reader.GetInt32(0);
-                            string nombreNivel = reader.GetString(1); 
+                            string nombreNivel = reader.GetString(1);
                             float tiempoTotal = reader.GetFloat(2);
                             int muertes = reader.GetInt32(3);
 
-                            // Comprobar si los valores son 0 y, si lo son, usar los textos predeterminados
                             if (nivelActual > 0)
-                            {
-                                ultimoNivel = "Nivel Actual: " + nombreNivel; // Mostrar nombre del nivel
-                            }
+                                ultimoNivel = "Nivel Actual: " + nombreNivel;
 
                             if (tiempoTotal > 0)
-                            {
                                 tiempoJugado = "Tiempo Jugado: " + tiempoTotal + " horas";
-                            }
 
                             if (muertes > 0)
-                            {
                                 muertesTotales = "Muertes Totales: " + muertes;
-                            }
                         }
                     }
 
@@ -97,6 +90,7 @@ public class TextOnDatasaves : MonoBehaviour
             }
         }
     }
+
 
     void AsignarDatosABoton(TextMeshProUGUI nivelText, TextMeshProUGUI tiempoText, TextMeshProUGUI muertesText, string ultimoNivel, string tiempoJugado, string muertesTotales)
     {

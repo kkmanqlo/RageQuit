@@ -56,14 +56,16 @@ public class DBManager : MonoBehaviour
                     CREATE TABLE IF NOT EXISTS EstadisticasNivel (
                         idEstadistica INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         idProgreso INTEGER NOT NULL,
-                        idNivel INTEGER NOT NULL UNIQUE,
+                        idNivel INTEGER NOT NULL,
                         muertes INTEGER NOT NULL,
                         tiempo REAL NOT NULL,
                         mejorTiempo REAL NOT NULL,
                         FOREIGN KEY(idProgreso) REFERENCES ProgresoJugador(idProgreso),
-                        FOREIGN KEY(idNivel) REFERENCES Niveles(idNivel)
+                        FOREIGN KEY(idNivel) REFERENCES Niveles(idNivel),
+                        UNIQUE(idProgreso, idNivel)
                     );
-                "; cmd.ExecuteNonQuery();
+                ";
+                cmd.ExecuteNonQuery();
             }
         }
 
