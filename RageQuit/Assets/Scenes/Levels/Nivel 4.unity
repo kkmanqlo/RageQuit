@@ -44720,6 +44720,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5767826517160430480, guid: 355c65bd4e68d3a479d9614aa3ecb4f3, type: 3}
+      propertyPath: m_UpdateMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6632664760145653283, guid: 355c65bd4e68d3a479d9614aa3ecb4f3, type: 3}
       propertyPath: m_Name
       value: Canvas_MenuPausa
@@ -44832,11 +44836,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2708136397865828621, guid: cf6dfbcb24d5eff408dea9367a95d759, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.728
+      value: -5.67
       objectReference: {fileID: 0}
     - target: {fileID: 2708136397865828621, guid: cf6dfbcb24d5eff408dea9367a95d759, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.517
+      value: 5.48
       objectReference: {fileID: 0}
     - target: {fileID: 2708136397865828621, guid: cf6dfbcb24d5eff408dea9367a95d759, type: 3}
       propertyPath: m_LocalPosition.z
