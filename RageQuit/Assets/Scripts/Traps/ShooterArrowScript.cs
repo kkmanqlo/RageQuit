@@ -6,13 +6,14 @@ public class ShooterArrowScript : MonoBehaviour
     public Animator animator;
 
      private bool alreadyShot = false;
+     public float raycastLength = 2f;
     
     void Update()
     {
         if (alreadyShot) return; 
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.down, 2f);
-        Debug.DrawRay(transform.position, Vector3.down * 2f, Color.red);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.down, raycastLength);
+        Debug.DrawRay(transform.position, Vector3.down * raycastLength, Color.red);
 
         if (hit.collider != null)
         {

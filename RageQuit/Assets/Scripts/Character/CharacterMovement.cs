@@ -124,10 +124,12 @@ public class CharacterMovement : MonoBehaviour
         string nombreEscena = SceneManager.GetActiveScene().name;
         int idNivelActual = NivelMap.GetIdNivelPorNombre(nombreEscena);
 
-        if (idNivelActual != 1)
-        {
-            LevelStatsManager.Instance.RegistrarMuerte();
-        }
+        // if (idNivelActual != 1)
+        // {
+        //     LevelStatsManager.Instance.RegistrarMuerte();
+        // } else {
+        //     Debug.Log("No se registra la muerte en el turorial");
+        // }
 
         spriteRenderer.DOColor(Color.red, 0.0f).OnComplete(() =>
         {

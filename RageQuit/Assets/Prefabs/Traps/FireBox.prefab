@@ -121,7 +121,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -167,7 +167,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePrefab: {fileID: 5741160644286641641, guid: 342483ef0121df549ba9e02f0221a6ff, type: 3}
-  detectionTrigger: {fileID: 5831610066831486270}
+  detectionTrigger: {fileID: 7430949698137327400}
   animator: {fileID: 2731238707085111409}
   activationDelay: 0.5
   fireDuration: 1
