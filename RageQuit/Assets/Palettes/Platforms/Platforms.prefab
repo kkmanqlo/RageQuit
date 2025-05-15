@@ -648,9 +648,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3277452331020264740, guid: d31b7ea5fd1e0724289b9fe9df95ed94, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8826255150315934936, guid: d31b7ea5fd1e0724289b9fe9df95ed94, type: 3}
       propertyPath: m_Name
       value: Spikes
+      objectReference: {fileID: 0}
+    - target: {fileID: 8826255150315934936, guid: d31b7ea5fd1e0724289b9fe9df95ed94, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -662,7 +670,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1508568170973598070, guid: d31b7ea5fd1e0724289b9fe9df95ed94, type: 3}
   m_PrefabInstance: {fileID: 4114765336768016195}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7991728278746133566
+--- !u!114 &217814502339129392
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

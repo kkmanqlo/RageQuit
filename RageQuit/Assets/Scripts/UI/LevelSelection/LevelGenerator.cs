@@ -39,8 +39,6 @@ public class LevelGenerator : MonoBehaviour
                     InsertarNivel(cmd, "Nivel 3", "Medio");
                     InsertarNivel(cmd, "Nivel 4", "Difícil");
                     InsertarNivel(cmd, "Nivel 5", "Difícil");
-                    InsertarNivel(cmd, "Nivel 6", "Extremo");
-                    InsertarNivel(cmd, "Nivel 7", "Extremo");
 
                     Debug.Log("Niveles insertados correctamente.");
                 }
