@@ -111,7 +111,7 @@ public class LevelSelectorUI : MonoBehaviour
 
         if (idNivel == 1)
         {
-            textoStats += "This is the tutorial level,\n";
+            textoStats += "\nThis is a tutorial,\n";
             textoStats += "stats will not be recorded.";
         }
         else
@@ -132,12 +132,12 @@ public class LevelSelectorUI : MonoBehaviour
                     {
                         if (reader.Read())
                         {
-                            textoStats += $"Deaths: {reader.GetInt32(0)}\n";
-                            textoStats += $"Best time: {reader.GetFloat(1):F2}s";
+                            textoStats += $"\nDeaths: {reader.GetInt32(0)}\n";
+                            textoStats += $"\nBest time: {reader.GetFloat(1):F2}s";
                         }
                         else
                         {
-                            textoStats += "No stats available for this level.";
+                            textoStats += "\nNo stats available for this level.";
                         }
                     }
                 }
