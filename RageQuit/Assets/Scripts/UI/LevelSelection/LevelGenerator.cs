@@ -31,21 +31,18 @@ public class LevelGenerator : MonoBehaviour
 
                 if (count == 0)
                 {
-                    Debug.Log("Insertando niveles manualmente...");
+                    
                     
                     InsertarNivel(cmd, "Tutorial", "Fácil");
-                    InsertarNivel(cmd, "Nivel 1", "Fácil");
-                    InsertarNivel(cmd, "Nivel 2", "Fácil");
-                    InsertarNivel(cmd, "Nivel 3", "Medio");
-                    InsertarNivel(cmd, "Nivel 4", "Difícil");
-                    InsertarNivel(cmd, "Nivel 5", "Difícil");
+                    InsertarNivel(cmd, "Level 1", "Fácil");
+                    InsertarNivel(cmd, "Level 2", "Fácil");
+                    InsertarNivel(cmd, "Level 3", "Medio");
+                    InsertarNivel(cmd, "Level 4", "Difícil");
+                    InsertarNivel(cmd, "Level 5", "Difícil");
 
-                    Debug.Log("Niveles insertados correctamente.");
+                    
                 }
-                else
-                {
-                    Debug.Log("Ya existen niveles en la base de datos.");
-                }
+                
             }
         }
 

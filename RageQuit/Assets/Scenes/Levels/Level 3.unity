@@ -738,7 +738,7 @@ GameObject:
   - component: {fileID: 299840374}
   - component: {fileID: 299840373}
   - component: {fileID: 299840377}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platforms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13350,11 +13350,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8769434229799256606, guid: 5ea92a75f72b7ed4c88012540ce98680, type: 3}
       propertyPath: sceneToLoad
-      value: LevelSelectionScene
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8769434229799256606, guid: 5ea92a75f72b7ed4c88012540ce98680, type: 3}
       propertyPath: autoLoadNextScene
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

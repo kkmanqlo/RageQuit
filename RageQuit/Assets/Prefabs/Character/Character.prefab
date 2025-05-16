@@ -169,6 +169,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 1
   JumpForce: 200
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!95 &2808620903505793710
 Animator:
   serializedVersion: 7

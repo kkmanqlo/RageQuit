@@ -13,17 +13,18 @@ public class FireBoxScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Aseguramos que solo se active si el trigger es el de detección
-        if (collision.IsTouching(detectionTrigger) && !activated)
+        if (!activated)
         {
             CharacterMovement character = collision.GetComponent<CharacterMovement>();
             if (character != null)
             {
                 activated = true;
+
                 DOVirtual.DelayedCall(activationDelay, () =>
                 {
                     animator.SetTrigger("Activate");
                     SpawnFire();
+
                     DOVirtual.DelayedCall(ReactivationTime, () =>
                     {
                         animator.SetTrigger("Deactivate");
@@ -33,6 +34,8 @@ public class FireBoxScript : MonoBehaviour
             }
         }
     }
+
+
 
     private void SpawnFire()
     {

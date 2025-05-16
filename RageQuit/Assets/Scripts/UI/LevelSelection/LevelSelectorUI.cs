@@ -51,9 +51,9 @@ public class LevelSelectorUI : MonoBehaviour
                 {
                     if (reader.Read())
                     {
-                        Debug.Log("Se leyó correctamente el nivel actual.");
+                       
                         nivelActual = reader.GetInt32(0);
-                        Debug.Log($"Nivel actual: {nivelActual}");
+                        
                     }
                     else
                     {
@@ -74,10 +74,10 @@ public class LevelSelectorUI : MonoBehaviour
                     {
                         int idNivel = reader.GetInt32(0);
                         string nombre = reader.GetString(1);
-                        Debug.Log($"Nivel encontrado (segunda vez): ID = {idNivel}, Nombre = {nombre}");
+                       
                         if (idNivel <= nivelActual)
                         {
-                            Debug.Log($"Creando botón (segunda vez) para el nivel: {nombre}");
+                            
                             CrearBotonNivel(idNivel, nombre, idProgreso);
                         }
                     }
@@ -88,8 +88,7 @@ public class LevelSelectorUI : MonoBehaviour
 
     void CrearBotonNivel(int idNivel, string nombreNivel, int idProgreso)
     {
-        Debug.Log($"Creando botón para el nivel: {nombreNivel}");
-        Debug.Log($"Valor de levelButtonPrefab antes de Instantiate: {levelButtonPrefab}");
+        
         GameObject obj = Instantiate(levelButtonPrefab, container);
         obj.transform.Find("NombreNivel").GetComponent<TextMeshProUGUI>().text = nombreNivel;
 
@@ -108,12 +107,12 @@ public class LevelSelectorUI : MonoBehaviour
 
         Transform popup = popupGeneral.transform;
 
-        string textoStats = $"Nivel: {nombreNivel}\n";
+        string textoStats = $"Level: {nombreNivel}\n";
 
         if (idNivel == 1)
         {
-            textoStats += "Este nivel es un tutorial,\n";
-            textoStats += "no se registran stats.";
+            textoStats += "This is the tutorial level,\n";
+            textoStats += "stats will not be recorded.";
         }
         else
         {
@@ -133,12 +132,12 @@ public class LevelSelectorUI : MonoBehaviour
                     {
                         if (reader.Read())
                         {
-                            textoStats += $"Muertes: {reader.GetInt32(0)}\n";
-                            textoStats += $"Mejor Tiempo: {reader.GetFloat(1):F2}s";
+                            textoStats += $"Deaths: {reader.GetInt32(0)}\n";
+                            textoStats += $"Best time: {reader.GetFloat(1):F2}s";
                         }
                         else
                         {
-                            textoStats += "Sin stats disponibles.";
+                            textoStats += "No stats available for this level.";
                         }
                     }
                 }

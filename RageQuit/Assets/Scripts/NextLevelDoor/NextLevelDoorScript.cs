@@ -67,7 +67,7 @@ public class NextLevelDoorScript : MonoBehaviour
             {
                 LevelStatsManager.PrepararCargaDeNivel(sceneToLoad);
                 SceneManager.LoadScene(sceneToLoad);
-            }
+            } 
             else
             {
                 Debug.LogError("No se ha asignado el nombre de la escena a cargar.");

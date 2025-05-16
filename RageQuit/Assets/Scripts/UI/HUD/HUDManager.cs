@@ -20,8 +20,8 @@ public class HUDManager : MonoBehaviour
         string nombreNivel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
         // Actualizar textos
-        muerteText.text = "Muertes: " + muertes;
-        tiempoText.text = "Tiempo: " + tiempo.ToString("F2") + "s";
+        muerteText.text = "Deaths: " + muertes;
+        tiempoText.text = "Time: " + tiempo.ToString("F2") + "s";
         nivelActualText.text = nombreNivel;
     }
 }

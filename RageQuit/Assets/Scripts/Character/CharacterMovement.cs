@@ -8,44 +8,40 @@ using UnityEngine.SceneManagement;
 
 public class CharacterMovement : MonoBehaviour
 {
-    //Metodos públicos para que se puedan modificar desde el editor// LayerMask para el suelo
     public float Speed;
     public float JumpForce;
 
-    // Coyote Time
-    private float coyoteTime = 0.11f; // Tiempo máximo para saltar después de dejar el suelo
+    private float coyoteTime = 0.11f;
     private float coyoteTimer;
 
     private bool hasJumpBuffered = false;
 
-    //Metodos privados para que no se puedan modificar desde el editor
     private Rigidbody2D Rigidbody2D;
     private Queue<KeyCode> inputBuffer;
     private Animator Animator;
     private float Horizontal;
     private bool Grounded;
     private SpriteRenderer spriteRenderer;
-    private Color originalColor; // Color original del sprite
+    private Color originalColor;
 
     public RaycastHit2D hit;
 
-    
+    public LayerMask groundLayer;  // Asigna en el inspector la capa suelo
 
-    Vector2 startPosition;
+    // Ajusta esta altura para que el raycast salga desde cerca de los pies
+    private float offsetY = 0f;
 
-    // Se llama al inicio del juego
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
-        Animator = GetComponent<Animator>();
-        startPosition = transform.position;
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color; // Guardar el color original
-        inputBuffer = new Queue<KeyCode>();
+        Rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
+        Animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
+        inputBuffer = new Queue<KeyCode>();
     }
 
-    // Se llama una vez por frame para actualizar la lógica del juego
     void Update()
     {
         Horizontal = Input.GetAxisRaw("Horizontal");
@@ -59,9 +55,14 @@ public class CharacterMovement : MonoBehaviour
         Animator.SetFloat("yvelocity", Rigidbody2D.linearVelocity.y);
         Animator.SetFloat("xvelocity", Rigidbody2D.linearVelocity.x);
 
-        hit = Physics2D.Raycast(transform.position, Vector3.down, 0.15f);
-        Debug.DrawRay(transform.position, Vector3.down * 0.15f, Color.red);
-        if (hit)
+        // Posición desde donde lanzamos el raycast (cerca de los pies)
+        Vector2 origenRaycast = (Vector2)transform.position + Vector2.down * offsetY;
+        float distanciaRaycast = 0.15f;
+
+        hit = Physics2D.Raycast(origenRaycast, Vector2.down, distanciaRaycast, groundLayer);
+        Debug.DrawRay(origenRaycast, Vector2.down * distanciaRaycast, hit.collider != null ? Color.green : Color.red);
+
+        if (hit.collider != null)
         {
             Grounded = true;
             coyoteTimer = coyoteTime;
@@ -70,18 +71,16 @@ public class CharacterMovement : MonoBehaviour
         {
             Grounded = false;
             coyoteTimer -= Time.deltaTime;
-
         }
 
-
-        if (Input.GetKeyDown(KeyCode.W) && inputBuffer.Count == 0  && !hasJumpBuffered)
+        if (Input.GetKeyDown(KeyCode.W) && inputBuffer.Count == 0 && !hasJumpBuffered)
         {
             inputBuffer.Enqueue(KeyCode.W);
             hasJumpBuffered = true;
-            Invoke("quitarAccion", 0.3f); // Llamar a quitarAccion después de 0.5 segundos
+            Invoke("quitarAccion", 0.3f);
         }
 
-        if (coyoteTimer > 0) // Solo si está realmente en el suelo
+        if (coyoteTimer > 0)
         {
             if (inputBuffer.Count > 0 && inputBuffer.Peek() == KeyCode.W)
             {
@@ -90,10 +89,8 @@ public class CharacterMovement : MonoBehaviour
                 inputBuffer.Dequeue();
             }
         }
-
     }
 
-    //Metodo para saltar
     private void Jump()
     {
         Rigidbody2D.linearVelocity = new Vector2(Rigidbody2D.linearVelocity.x, 0);
@@ -108,28 +105,26 @@ public class CharacterMovement : MonoBehaviour
         hasJumpBuffered = false;
     }
 
-
-    //El metodo FixedUpdate se llama en cada frame de fisica
-
     private void FixedUpdate()
     {
-        Rigidbody2D.linearVelocity = new Vector2(Horizontal, Rigidbody2D.linearVelocity.y);
+        Rigidbody2D.linearVelocity = new Vector2(Horizontal * Speed, Rigidbody2D.linearVelocity.y);
     }
 
     public void Die()
     {
-
-        GetComponent<Animator>().enabled = false;
+        Animator.enabled = false;
 
         string nombreEscena = SceneManager.GetActiveScene().name;
         int idNivelActual = NivelMap.GetIdNivelPorNombre(nombreEscena);
 
-        // if (idNivelActual != 1)
-        // {
-        //     LevelStatsManager.Instance.RegistrarMuerte();
-        // } else {
-        //     Debug.Log("No se registra la muerte en el turorial");
-        // }
+        if (idNivelActual != 1)
+        {
+            LevelStatsManager.Instance.RegistrarMuerte();
+        }
+        else
+        {
+            Debug.Log("No se registra la muerte en el tutorial");
+        }
 
         spriteRenderer.DOColor(Color.red, 0.0f).OnComplete(() =>
         {
@@ -138,12 +133,7 @@ public class CharacterMovement : MonoBehaviour
             DOVirtual.DelayedCall(0.2f, () =>
             {
                 Time.timeScale = 1f;
-
-                // Cancelar todos los tweens activos para evitar errores de objetos destruidos
                 DOTween.KillAll();
-
-                // Recargar escena
-
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }).SetUpdate(true);
         });

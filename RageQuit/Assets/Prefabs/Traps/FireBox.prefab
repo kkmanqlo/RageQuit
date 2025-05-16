@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7430949698137327400}
   - component: {fileID: 961691518554025247}
   - component: {fileID: 2731238707085111409}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FireBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,11 +121,11 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.00000011920929, y: 0.000000014901161}
+  m_Offset: {x: 0.00000022724271, y: 0.000000014901161}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -135,7 +135,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.14165664, y: 0.17000005}
+  m_Size: {x: 0.14781812, y: 0.17000005}
   m_EdgeRadius: 0
 --- !u!61 &7430949698137327400
 BoxCollider2D:
@@ -167,7 +167,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePrefab: {fileID: 5741160644286641641, guid: 342483ef0121df549ba9e02f0221a6ff, type: 3}
-  detectionTrigger: {fileID: 7430949698137327400}
+  detectionTrigger: {fileID: 5831610066831486270}
   animator: {fileID: 2731238707085111409}
   activationDelay: 0.5
   fireDuration: 1

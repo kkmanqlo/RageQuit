@@ -4,17 +4,19 @@ using System.Collections.Generic;
 
 public class LevelStatsManager : MonoBehaviour
 {
-    public static LevelStatsManager Instance;
+    public static LevelStatsManager Instance { get; private set; }
 
     private int muertes;
     private int idProgreso;
     private string dbPath;
 
-    public int IdNivel => NivelMap.GetIdNivelPorNombre(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-    public float TiempoActual => Time.timeSinceLevelLoad;
-    public int MuertesActuales => muertes;
+    private float tiempoAcumuladoEnNivel = 0f;
 
     private static HashSet<string> escenasReiniciadas = new HashSet<string>();
+
+    public int IdNivel => NivelMap.GetIdNivelPorNombre(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    public float TiempoActual => tiempoAcumuladoEnNivel;
+    public int MuertesActuales => muertes;
 
     void Awake()
     {
@@ -22,6 +24,7 @@ public class LevelStatsManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         }
         else
         {
@@ -29,15 +32,17 @@ public class LevelStatsManager : MonoBehaviour
         }
     }
 
-    void Start()
+    void Update()
     {
-        dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
+        // Acumula el tiempo manualmente con deltaTime
+        tiempoAcumuladoEnNivel += Time.deltaTime;
     }
 
     public void Inicializar()
     {
         idProgreso = GameSession.Instance.IdProgreso;
         muertes = 0;
+        tiempoAcumuladoEnNivel = 0f;  // Reinicia tiempo cuando inicias nivel
         Debug.Log($"Inicializando LevelStatsManager. idProgreso: {idProgreso}");
     }
 
@@ -57,6 +62,7 @@ public class LevelStatsManager : MonoBehaviour
         }
 
         muertes = 0;
+        tiempoAcumuladoEnNivel = 0f; // Reinicia también el tiempo aquí para que no persista si quieres
         escenasReiniciadas.Add(escenaActual);
         Debug.Log("Estadísticas reiniciadas.");
     }
@@ -65,8 +71,9 @@ public class LevelStatsManager : MonoBehaviour
     {
         muertes++;
         Debug.Log($"Muertes registradas: {muertes}");
-        RegistrarMuerteEnDB();
+        RegistrarMuerteEnDB();  // Tu método para guardar en BD
     }
+
 
     private void RegistrarMuerteEnDB()
     {
@@ -74,35 +81,66 @@ public class LevelStatsManager : MonoBehaviour
         {
             conexion.Open();
 
-            // Insertar o actualizar muertes en EstadisticasNivel
-            using (var cmd = conexion.CreateCommand())
-            {
-                cmd.CommandText = @"
-                INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo)
-                VALUES (@progreso, @nivel, 1, 0, 0)
-                ON CONFLICT(idProgreso, idNivel)
-                DO UPDATE SET muertes = muertes + 1";
+            bool existeRegistro = false;
 
-                cmd.Parameters.AddWithValue("@progreso", idProgreso);
-                cmd.Parameters.AddWithValue("@nivel", IdNivel);
-                cmd.ExecuteNonQuery();
+            // Verificar si existe registro para este nivel y progreso
+            using (var cmdCheck = conexion.CreateCommand())
+            {
+                cmdCheck.CommandText = @"
+                SELECT 1 FROM EstadisticasNivel 
+                WHERE idNivel = @nivel AND idProgreso = @progreso
+                LIMIT 1";
+                cmdCheck.Parameters.AddWithValue("@nivel", IdNivel);
+                cmdCheck.Parameters.AddWithValue("@progreso", idProgreso);
+
+                var result = cmdCheck.ExecuteScalar();
+                existeRegistro = (result != null);
             }
 
-            // Actualizar muertes totales
+            if (existeRegistro)
+            {
+                // Si existe, actualizar muertes sumando 1
+                using (var cmdUpdate = conexion.CreateCommand())
+                {
+                    cmdUpdate.CommandText = @"
+                    UPDATE EstadisticasNivel 
+                    SET muertes = muertes + 1 
+                    WHERE idNivel = @nivel AND idProgreso = @progreso";
+                    cmdUpdate.Parameters.AddWithValue("@nivel", IdNivel);
+                    cmdUpdate.Parameters.AddWithValue("@progreso", idProgreso);
+                    cmdUpdate.ExecuteNonQuery();
+                }
+            }
+            else
+            {
+                // Si no existe, insertar nuevo registro con muertes=1 y tiempos iniciales
+                using (var cmdInsert = conexion.CreateCommand())
+                {
+                    cmdInsert.CommandText = @"
+                    INSERT INTO EstadisticasNivel (idProgreso, idNivel, muertes, tiempo, mejorTiempo) 
+                    VALUES (@progreso, @nivel, 1, 0, 999999)";
+                    cmdInsert.Parameters.AddWithValue("@progreso", idProgreso);
+                    cmdInsert.Parameters.AddWithValue("@nivel", IdNivel);
+                    cmdInsert.ExecuteNonQuery();
+                }
+                Debug.Log("[DEBUG] Primer muerte en este nivel, se insertó nuevo registro en EstadisticasNivel.");
+            }
+
+            // Actualizar muertes totales en ProgresoJugador
             using (var cmdProgreso = conexion.CreateCommand())
             {
                 cmdProgreso.CommandText = @"
                 UPDATE ProgresoJugador
                 SET muertesTotales = muertesTotales + 1
                 WHERE idProgreso = @idProgreso";
-
                 cmdProgreso.Parameters.AddWithValue("@idProgreso", idProgreso);
                 cmdProgreso.ExecuteNonQuery();
             }
         }
 
-        Debug.Log("[DEBUG] Muerte registrada en DB (individual)");
+        Debug.Log("[DEBUG] Muerte registrada en DB correctamente.");
     }
+
 
     public void GuardarTiempoFinal()
     {

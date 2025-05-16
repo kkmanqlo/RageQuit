@@ -2,6 +2,7 @@ using UnityEngine;
 using Mono.Data.Sqlite;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class TextOnDatasaves : MonoBehaviour
 {
@@ -38,51 +39,83 @@ public class TextOnDatasaves : MonoBehaviour
         using (var conexion = new SqliteConnection(dbPath))
         {
             conexion.Open();
+
+            // Obtener el ID del último nivel disponible en la tabla Niveles
+            int ultimoNivelID = 0;
+            using (var cmdMax = conexion.CreateCommand())
+            {
+                cmdMax.CommandText = "SELECT MAX(idNivel) FROM Niveles;";
+                var result = cmdMax.ExecuteScalar();
+                if (result != DBNull.Value)
+                    ultimoNivelID = Convert.ToInt32(result);
+            }
+
             using (var cmd = conexion.CreateCommand())
             {
                 for (int i = 1; i <= 3; i++)
                 {
-                    // Reiniciar textos predeterminados por slot
-                    string ultimoNivel = "No hay niveles completados";
-                    string tiempoJugado = "No hay tiempo jugado";
-                    string muertesTotales = "No hay muertes registradas";
-                    string tiempoFormateado = "No hay tiempo jugado";
+                    string ultimoNivel = "No progress detected";
+                    string tiempoJugado = "No time played";
+                    string muertesTotales = "No deaths recorded";
+                    string tiempoFormateado = "No time played";
 
-                    // Consulta para obtener el progreso del jugador y el nombre del nivel para cada slot
+                    // Obtener progreso del jugador sin JOIN
                     cmd.CommandText = @"
-                    SELECT p.nivelActual, n.nombreNivel, p.tiempoTotal, p.muertesTotales
-                    FROM ProgresoJugador p
-                    INNER JOIN Niveles n ON p.nivelActual = n.idNivel
-                    WHERE p.idUsuario = @idUsuario AND p.slotNumero = @slot
+                    SELECT nivelActual, tiempoTotal, muertesTotales
+                    FROM ProgresoJugador
+                    WHERE idUsuario = @idUsuario AND slotNumero = @slot
                     LIMIT 1;
                 ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
                     cmd.Parameters.AddWithValue("@slot", i);
 
+                    int nivelActual = 0;
+                    float tiempoTotal = 0;
+                    int muertes = 0;
+
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            int nivelActual = reader.GetInt32(0);
-                            string nombreNivel = reader.GetString(1);
-                            float tiempoTotal = reader.GetFloat(2);
-                            int muertes = reader.GetInt32(3);
-
-                            if (nivelActual > 0)
-                                ultimoNivel = "Nivel Actual: " + nombreNivel;
-
-                            if (tiempoTotal > 0){
-                                tiempoFormateado = System.TimeSpan.FromSeconds(tiempoTotal).ToString(@"hh\:mm\:ss");
-                                tiempoJugado = "Tiempo Jugado: " + tiempoFormateado;
-                            } else {
-                                tiempoJugado = "No hay tiempo jugado";
-                            }
-
-                            if (muertes > 0)
-                                muertesTotales = "Muertes Totales: " + muertes;
+                            nivelActual = reader.GetInt32(0);
+                            tiempoTotal = reader.GetFloat(1);
+                            muertes = reader.GetInt32(2);
                         }
                     }
+
+                    // Obtener nombre del nivel si aún existe
+                    string nombreNivel = null;
+                    if (nivelActual > 0 && nivelActual <= ultimoNivelID)
+                    {
+                        using (var cmdNivel = conexion.CreateCommand())
+                        {
+                            cmdNivel.CommandText = "SELECT nombreNivel FROM Niveles WHERE idNivel = @nivelID;";
+                            cmdNivel.Parameters.AddWithValue("@nivelID", nivelActual);
+
+                            var result = cmdNivel.ExecuteScalar();
+                            if (result != null)
+                                nombreNivel = result.ToString();
+                        }
+                    }
+
+                    // Evaluar estado
+                    if (nivelActual > 0)
+                    {
+                        if (nivelActual > ultimoNivelID)
+                            ultimoNivel = "All levels completed!";
+                        else if (!string.IsNullOrEmpty(nombreNivel))
+                            ultimoNivel = "Current Level: " + nombreNivel;
+                    }
+
+                    if (tiempoTotal > 0)
+                    {
+                        tiempoFormateado = System.TimeSpan.FromSeconds(tiempoTotal).ToString(@"hh\:mm\:ss");
+                        tiempoJugado = "Time played: " + tiempoFormateado;
+                    }
+
+                    if (muertes > 0)
+                        muertesTotales = "Total deaths: " + muertes;
 
                     // Asignar los datos al botón correspondiente
                     if (i == 1)
@@ -95,6 +128,7 @@ public class TextOnDatasaves : MonoBehaviour
             }
         }
     }
+
 
 
     void AsignarDatosABoton(TextMeshProUGUI nivelText, TextMeshProUGUI tiempoText, TextMeshProUGUI muertesText, string ultimoNivel, string tiempoJugado, string muertesTotales)

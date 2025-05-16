@@ -9,7 +9,7 @@ public class LevelSelectorManager : MonoBehaviour
     {
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         CargarIdProgreso();
-        LevelStatsManager.Instance.Inicializar();
+        LevelStatsManager.Instance.Inicializar(); 
     }
 
     void CargarIdProgreso()
