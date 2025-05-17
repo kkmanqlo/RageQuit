@@ -4,6 +4,9 @@ using System.Collections;
 
 public class Cannon : MonoBehaviour
 {
+
+    // Este script es el mismo que el de Cannon_Horizontal, pero con la diferencia de que
+    // este cañón se mueve verticalmente y dispara proyectiles en la dirección especificada.
     [Header("Movimiento del Proyectil")]
     public Vector3 direction = Vector3.right; // Dirección por defecto
     public float distance;

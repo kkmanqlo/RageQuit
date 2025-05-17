@@ -7,28 +7,32 @@ using TMPro;
 
 public class LevelSelectorUI : MonoBehaviour
 {
-    public Transform container;
-    public GameObject levelButtonPrefab;
-    private string dbPath;
-    private GameObject popupActivo;
+    public Transform container;                 // Contenedor para los botones de nivel
+    public GameObject levelButtonPrefab;        // Prefab del botón de nivel
+    private string dbPath;                       // Ruta a la base de datos SQLite
+    private GameObject popupActivo;              // Referencia al popup actualmente activo
 
-    public GameObject popupGeneral;
+    public GameObject popupGeneral;              // Popup general para mostrar info del nivel
 
     void OnEnable()
     {
+        // Validar que el contenedor esté asignado
         if (container == null)
         {
             Debug.LogError("El contenedor de botones no está asignado en el inspector.");
             return;
         }
 
+        // Definir ruta a la base de datos
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
+
+        // Mostrar los niveles desbloqueados
         MostrarNivelesDesbloqueados();
     }
 
     void MostrarNivelesDesbloqueados()
     {
-        // Limpiar botones anteriores
+        // Limpiar botones previos en el contenedor
         foreach (Transform child in container)
         {
             Destroy(child.gameObject);
@@ -41,43 +45,41 @@ public class LevelSelectorUI : MonoBehaviour
         {
             conexion.Open();
 
-            // Obtener nivel actual
+            // Obtener nivel actual del progreso del jugador
             using (var cmd = conexion.CreateCommand())
             {
-
                 cmd.CommandText = "SELECT nivelActual FROM ProgresoJugador WHERE idProgreso = @id";
                 cmd.Parameters.AddWithValue("@id", idProgreso);
+
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                       
                         nivelActual = reader.GetInt32(0);
-                        
                     }
                     else
                     {
                         Debug.LogError("Error: No se encontró el nivel actual en la base de datos. No se mostrarán niveles.");
-                        return; // Salimos si no hay progreso válido
+                        return; // Salir si no hay progreso válido
                     }
-
                 }
             }
 
-            // Obtener niveles desbloqueados
+            // Obtener todos los niveles ordenados por id
             using (var cmd = conexion.CreateCommand())
             {
                 cmd.CommandText = "SELECT idNivel, nombreNivel FROM Niveles ORDER BY idNivel ASC";
+
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         int idNivel = reader.GetInt32(0);
                         string nombre = reader.GetString(1);
-                       
+
+                        // Solo crear botón para niveles desbloqueados (id <= nivel actual)
                         if (idNivel <= nivelActual)
                         {
-                            
                             CrearBotonNivel(idNivel, nombre, idProgreso);
                         }
                     }
@@ -88,20 +90,25 @@ public class LevelSelectorUI : MonoBehaviour
 
     void CrearBotonNivel(int idNivel, string nombreNivel, int idProgreso)
     {
-        
+        // Instanciar botón dentro del contenedor
         GameObject obj = Instantiate(levelButtonPrefab, container);
+
+        // Asignar texto con el nombre del nivel
         obj.transform.Find("NombreNivel").GetComponent<TextMeshProUGUI>().text = nombreNivel;
 
+        // Obtener el componente Button y asignar evento click
         Button boton = obj.GetComponentInChildren<Button>();
 
+        // Capturar idNivel para usar dentro del lambda
         int capturedIdNivel = idNivel;
-        boton.onClick.AddListener(() => MostrarPopupNivel(obj, capturedIdNivel, nombreNivel, idProgreso));
 
+        // Agregar listener para mostrar popup al hacer click en el botón
+        boton.onClick.AddListener(() => MostrarPopupNivel(obj, capturedIdNivel, nombreNivel, idProgreso));
     }
 
     void MostrarPopupNivel(GameObject botonNivel, int idNivel, string nombreNivel, int idProgreso)
     {
-        // Oculta cualquier popup previo
+        // Ocultar popup activo previo, si hay
         if (popupActivo != null)
             popupActivo.SetActive(false);
 
@@ -109,6 +116,7 @@ public class LevelSelectorUI : MonoBehaviour
 
         string textoStats = $"Level: {nombreNivel}\n";
 
+        // Si es tutorial, indicamos que no se registran estadísticas
         if (idNivel == 1)
         {
             textoStats += "\nThis is a tutorial,\n";
@@ -116,9 +124,11 @@ public class LevelSelectorUI : MonoBehaviour
         }
         else
         {
+            // Consultar estadísticas guardadas en base de datos
             using (var conexion = new SqliteConnection(dbPath))
             {
                 conexion.Open();
+
                 using (var cmd = conexion.CreateCommand())
                 {
                     cmd.CommandText = @"
@@ -144,29 +154,36 @@ public class LevelSelectorUI : MonoBehaviour
             }
         }
 
+        // Actualizar texto del popup con las estadísticas o mensaje
         popup.Find("TextoStats").GetComponent<TextMeshProUGUI>().text = textoStats;
+
+        // Mostrar popup
         popup.gameObject.SetActive(true);
         popupActivo = popup.gameObject;
 
+        // Configurar botón jugar con evento para cargar nivel
         Button jugarBtn = popup.Find("BotonJugar").GetComponent<Button>();
         jugarBtn.onClick.RemoveAllListeners();
         jugarBtn.onClick.AddListener(() => CargarNivel(nombreNivel));
 
+        // Configurar botón cancelar para ocultar popup
         Button closeBtn = popup.Find("BotonCancelar").GetComponent<Button>();
         closeBtn.onClick.RemoveAllListeners();
         closeBtn.onClick.AddListener(() => OcultarPopUp());
-
     }
 
     void CargarNivel(string nombreEscena)
     {
+        // Cargar escena según el nombre recibido
         UnityEngine.SceneManagement.SceneManager.LoadScene(nombreEscena);
     }
 
     public void OcultarPopUp()
     {
-        popupActivo.SetActive(false);
+        // Ocultar popup activo si existe
+        if (popupActivo != null)
+            popupActivo.SetActive(false);
     }
-
 }
+
 

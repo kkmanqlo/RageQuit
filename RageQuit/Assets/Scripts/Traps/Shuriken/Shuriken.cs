@@ -4,35 +4,42 @@ using DG.Tweening;
 public class ShurikenProjectile : MonoBehaviour
 {
     [Header("Movimiento del shuriken")]
-    public Vector3 direction = new Vector3(); // Dirección por defecto: diagonal abajo-derecha
-    public float distance;
-    public float duration;
+    public Vector3 direction = new Vector3();  // Dirección en la que se moverá el shuriken
+    public float distance;                     // Distancia que recorrerá el shuriken
+    public float duration;                     // Duración del movimiento hasta el destino
 
     void OnEnable()
     {
-        // Calcula la posición final basándose en la dirección normalizada
+        // Calcula el punto destino sumando la dirección normalizada multiplicada por la distancia
         Vector3 destination = transform.position + direction.normalized * distance;
 
-        // Movimiento usando DOTween
+        // Inicia el movimiento del shuriken hacia el destino con DOTween, con movimiento lineal
         transform.DOMove(destination, duration)
-            .SetEase(Ease.Linear)
+            .SetEase(Ease.Linear)               // Movimiento con velocidad constante
             .OnComplete(() =>
             {
+                // Al finalizar el movimiento, destruye este objeto shuriken
                 Destroy(gameObject);
             });
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Comprobamos si el objeto que entró es el personaje
+        // Obtiene el componente CharacterMovement del objeto colisionado, si existe
         CharacterMovement character = collision.GetComponent<CharacterMovement>();
+
+        // Si no hay CharacterMovement, no hace nada
         if (character == null) return;
 
-        // Verificamos si fue tocado por el shuriken
+        // Comprueba que el collider está tocando el collider de este objeto
         if (collision.IsTouching(GetComponent<Collider2D>()))
         {
+            // Detiene todas las animaciones/tweens activos (DOTween)
             DOTween.KillAll();
+
+            // Llama al método Die() del personaje para que muera
             character.Die();
         }
     }
 }
+

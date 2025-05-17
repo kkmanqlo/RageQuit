@@ -7,21 +7,28 @@ public class ButtonAnimation : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        animator = GetComponent<Animator>(); // Obtenemos el Animator del botón
     }
 
+    // Método llamado al hacer click en el botón
     public void OnClick()
     {
+        // Reseteamos triggers para evitar conflictos de animación
         animator.ResetTrigger("Highlighted");
         animator.ResetTrigger("Pressed");
         animator.ResetTrigger("Selected");
 
-        animator.SetTrigger("Normal");     // Vuelve a Normal (esto activa la transición)
-        animator.SetTrigger("Pressed");    // Luego lanza la animación que quieres
+        // Activamos el trigger "Normal" para volver al estado base
+        animator.SetTrigger("Normal");
+
+        // Activamos el trigger "Pressed" para reproducir la animación de presión
+        animator.SetTrigger("Pressed");
     }
 
+    // Método placeholder para resetear animación, aún no implementado
     internal void ResetAnimation()
     {
         throw new NotImplementedException();
     }
 }
+

@@ -8,12 +8,11 @@ public class TextOnDatasaves : MonoBehaviour
 {
     private string dbPath;
 
-    // Referencias a los botones y sus TextMeshPro
+    // Referencias a los botones y sus textos (TextMeshPro) para mostrar la info de cada slot
     public Button button1;
     public Button button2;
     public Button button3;
 
-    // Referencias a los TextMeshPro de cada botón
     public TextMeshProUGUI button1NivelText;
     public TextMeshProUGUI button1TiempoText;
     public TextMeshProUGUI button1MuertesText;
@@ -28,10 +27,12 @@ public class TextOnDatasaves : MonoBehaviour
 
     void Start()
     {
+        // Ruta a la base de datos local
         dbPath = "URI=file:" + Application.persistentDataPath + "/RageQuitDB.db";
         CargarDatos();
     }
 
+    // Carga los datos de progreso guardados y actualiza los textos en los botones
     void CargarDatos()
     {
         int idUsuario = UsuarioManager.Instance.IdUsuario;
@@ -40,7 +41,7 @@ public class TextOnDatasaves : MonoBehaviour
         {
             conexion.Open();
 
-            // Obtener el ID del último nivel disponible en la tabla Niveles
+            // Obtener el ID del último nivel disponible para validar progresos
             int ultimoNivelID = 0;
             using (var cmdMax = conexion.CreateCommand())
             {
@@ -52,20 +53,22 @@ public class TextOnDatasaves : MonoBehaviour
 
             using (var cmd = conexion.CreateCommand())
             {
+                // Para cada slot de progreso (1 a 3) consulta y muestra los datos
                 for (int i = 1; i <= 3; i++)
                 {
+                    // Valores por defecto si no hay datos
                     string ultimoNivel = "No progress detected";
                     string tiempoJugado = "No time played";
                     string muertesTotales = "No deaths recorded";
                     string tiempoFormateado = "No time played";
 
-                    // Obtener progreso del jugador sin JOIN
+                    // Consulta el progreso del jugador para el slot i
                     cmd.CommandText = @"
                     SELECT nivelActual, tiempoTotal, muertesTotales
                     FROM ProgresoJugador
                     WHERE idUsuario = @idUsuario AND slotNumero = @slot
                     LIMIT 1;
-                ";
+                    ";
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@idUsuario", idUsuario);
                     cmd.Parameters.AddWithValue("@slot", i);
@@ -74,6 +77,7 @@ public class TextOnDatasaves : MonoBehaviour
                     float tiempoTotal = 0;
                     int muertes = 0;
 
+                    // Leer datos de la consulta
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -84,7 +88,7 @@ public class TextOnDatasaves : MonoBehaviour
                         }
                     }
 
-                    // Obtener nombre del nivel si aún existe
+                    // Buscar nombre del nivel actual solo si existe dentro de los niveles definidos
                     string nombreNivel = null;
                     if (nivelActual > 0 && nivelActual <= ultimoNivelID)
                     {
@@ -99,7 +103,7 @@ public class TextOnDatasaves : MonoBehaviour
                         }
                     }
 
-                    // Evaluar estado
+                    // Evaluar el estado para mostrar en pantalla
                     if (nivelActual > 0)
                     {
                         if (nivelActual > ultimoNivelID)
@@ -108,16 +112,18 @@ public class TextOnDatasaves : MonoBehaviour
                             ultimoNivel = "Current Level: " + nombreNivel;
                     }
 
+                    // Formatear el tiempo total jugado
                     if (tiempoTotal > 0)
                     {
                         tiempoFormateado = System.TimeSpan.FromSeconds(tiempoTotal).ToString(@"hh\:mm\:ss");
                         tiempoJugado = "Time played: " + tiempoFormateado;
                     }
 
+                    // Mostrar muertes totales si hay
                     if (muertes > 0)
                         muertesTotales = "Total deaths: " + muertes;
 
-                    // Asignar los datos al botón correspondiente
+                    // Asignar la info al botón correspondiente
                     if (i == 1)
                         AsignarDatosABoton(button1NivelText, button1TiempoText, button1MuertesText, ultimoNivel, tiempoJugado, muertesTotales);
                     else if (i == 2)
@@ -129,8 +135,7 @@ public class TextOnDatasaves : MonoBehaviour
         }
     }
 
-
-
+    // Actualiza los textos de nivel, tiempo y muertes en el botón correspondiente
     void AsignarDatosABoton(TextMeshProUGUI nivelText, TextMeshProUGUI tiempoText, TextMeshProUGUI muertesText, string ultimoNivel, string tiempoJugado, string muertesTotales)
     {
         nivelText.text = ultimoNivel;
@@ -138,3 +143,4 @@ public class TextOnDatasaves : MonoBehaviour
         muertesText.text = muertesTotales;
     }
 }
+

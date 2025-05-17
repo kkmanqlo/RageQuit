@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class NivelMap
 {
+    // Lista estática de niveles con su ID y nombre de escena
     public static List<NivelData> Niveles = new List<NivelData>
     {
         new NivelData { idNivel = 1, nombreEscena = "Tutorial" },
@@ -13,9 +14,10 @@ public static class NivelMap
         new NivelData { idNivel = 6, nombreEscena = "Level 5" },
     };
 
+    // Método para obtener el ID del nivel a partir del nombre de la escena
     public static int GetIdNivelPorNombre(string nombreEscena)
     {
         var nivel = Niveles.Find(n => n.nombreEscena == nombreEscena);
-        return nivel != null ? nivel.idNivel : -1;
+        return nivel != null ? nivel.idNivel : -1; // Retorna -1 si no encuentra el nivel
     }
 }

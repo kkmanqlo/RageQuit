@@ -5,6 +5,11 @@ using Mono.Data.Sqlite;
 
 public class NextLevelDoorTutorial : MonoBehaviour
 {
+    // Este script se encarga de manejar la puerta de siguiente nivel en el juego.
+    // Al entrar en la puerta, se actualiza el progreso del jugador en la base de datos
+    // y se carga la siguiente escena o una escena específica.
+    // La diferencia con el script original es que este no guarda estadísticas del nivel,
+    // ya que no se requiere en el tutorial.  
     [Tooltip("¿Usar siguiente escena en el build index automáticamente?")]
     public bool autoLoadNextScene = true;
 
