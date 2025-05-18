@@ -1019,6 +1019,7 @@ GameObject:
   - component: {fileID: 834052156}
   - component: {fileID: 834052155}
   - component: {fileID: 834052154}
+  - component: {fileID: 834052157}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1100,6 +1101,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &834052157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834052153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d91d86889a5428942bc4677deb73a53d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetAspect: 1.7777778
 --- !u!1 &844916139
 GameObject:
   m_ObjectHideFlags: 0
@@ -2602,6 +2616,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1922
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3193531017274448001, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4522392107913712928, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -2617,6 +2663,10 @@ PrefabInstance:
     - target: {fileID: 4522392107913712928, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
       propertyPath: m_Color.r
       value: 0.34901962
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463940856810477894, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5463940856810477894, guid: b38c79b0d21386e44a97ffe9ea64a623, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag

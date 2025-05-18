@@ -67,6 +67,7 @@ public class CharacterMovement : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.inputBloqueado) return;
         // Leer input horizontal (teclas A/D o flechas).
         Horizontal = Input.GetAxisRaw("Horizontal");
 

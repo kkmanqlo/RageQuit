@@ -33,48 +33,66 @@ public class TriggerController : MonoBehaviour
     }
 
     // Método para cargar las resoluciones soportadas y mostrarlas en el dropdown
-    public void CheckResolutions()
+public void CheckResolutions()
+{
+    resolutions = Screen.resolutions;
+    resolutionDropdown.ClearOptions();
+
+    int currentResolutionIndex = 0;
+    List<string> options = new List<string>();
+    List<Resolution> uniqueResolutions = new List<Resolution>();
+    HashSet<string> seenResolutions = new HashSet<string>();
+
+    for (int i = 0; i < resolutions.Length; i++)
     {
-        resolutions = Screen.resolutions;  // Obtener todas las resoluciones soportadas
-        resolutionDropdown.ClearOptions(); // Limpiar opciones anteriores del dropdown
-        int currentResolutionIndex = 0;    // Índice para seleccionar la resolución actual
-        List<string> options = new List<string>(); // Lista de strings para mostrar en el dropdown
+        string resString = resolutions[i].width + "x" + resolutions[i].height;
 
-        // Iterar todas las resoluciones para crear las opciones de texto
-        for (int i = 0; i < resolutions.Length; i++)
+        if (!seenResolutions.Contains(resString))
         {
-            // Crear texto como "1920 x 1080"
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-            options.Add(option);
-
-            // Si la resolución es la misma que la actual, guardar el índice
-            if (Screen.fullScreen && resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
-            {
-                currentResolutionIndex = i;
-            }
+            seenResolutions.Add(resString);
+            uniqueResolutions.Add(resolutions[i]);
         }
-
-        // Agregar las opciones al dropdown
-        resolutionDropdown.AddOptions(options);
-
-        // Seleccionar la opción que coincide con la resolución actual
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
-
-        // Finalmente, cargar la resolución guardada en PlayerPrefs si existe, si no, usa 0
-        resolutionDropdown.value = PlayerPrefs.GetInt("ResolutionIndex", 0);
     }
+
+    // 🔽 Ordenar de mayor a menor resolución
+    uniqueResolutions.Sort((a, b) =>
+    {
+        if (a.width != b.width)
+            return b.width.CompareTo(a.width);
+        else
+            return b.height.CompareTo(a.height);
+    });
+
+    // Generar opciones ya ordenadas
+    for (int i = 0; i < uniqueResolutions.Count; i++)
+    {
+        string option = uniqueResolutions[i].width + " x " + uniqueResolutions[i].height;
+        options.Add(option);
+
+        if (Screen.fullScreen &&
+            uniqueResolutions[i].width == Screen.currentResolution.width &&
+            uniqueResolutions[i].height == Screen.currentResolution.height)
+        {
+            currentResolutionIndex = i;
+        }
+    }
+
+    resolutionDropdown.AddOptions(options);
+    resolutionDropdown.value = PlayerPrefs.GetInt("ResolutionIndex", currentResolutionIndex);
+    resolutionDropdown.RefreshShownValue();
+
+    resolutions = uniqueResolutions.ToArray();
+
+    SetResolution(resolutionDropdown.value);
+}
 
     // Método llamado cuando el usuario selecciona una resolución en el dropdown
     public void SetResolution(int resolutionIndex)
     {
-        // Guardar la resolución seleccionada para que se recuerde en futuras ejecuciones
-        PlayerPrefs.SetInt("ResolutionIndex", resolutionDropdown.value);
+        PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
 
-        // Obtener la resolución seleccionada
         Resolution resolution = resolutions[resolutionIndex];
 
-        // Aplicar la resolución y mantener el estado de pantalla completa
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 }
