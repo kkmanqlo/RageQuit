@@ -13339,6 +13339,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90.283
       objectReference: {fileID: 0}
+    - target: {fileID: 3925691470879380157, guid: d22a113075c24e74087417ecc4815508, type: 3}
+      propertyPath: distance
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3925691470879380157, guid: d22a113075c24e74087417ecc4815508, type: 3}
+      propertyPath: duration
+      value: 0.416
+      objectReference: {fileID: 0}
     - target: {fileID: 5270501616191268451, guid: d22a113075c24e74087417ecc4815508, type: 3}
       propertyPath: m_Name
       value: "Ca\xF1on_Horizontal"
